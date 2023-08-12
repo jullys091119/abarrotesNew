@@ -80,7 +80,7 @@ function ModalBimbo() {
       }
     };
     axios.request(options).then(function (response) {
-
+       //console.log("producto agregado", response.data)
     }).catch(function (error) {
     });
     productos[index].attributes.field_isactive = true
@@ -112,6 +112,8 @@ function ModalBimbo() {
   }
 
   const quitFavorites = (index, bool, idProduct) => {
+    console.log(idProduct, "<<<<<<<<<<<<<<<<")
+    getProductsFavorites(idProduct)
     var options = {
       method: 'PATCH',
       url: 'https://abarrotes.msalazar.dev/node/' +  idProduct,
@@ -129,29 +131,27 @@ function ModalBimbo() {
       }
     };
     axios.request(options).then(function (response) {
-      getProductsFavorites(index, idProduct)
+     
     }).catch(function (error) {
     }); 
     
     productos[index].attributes.field_isactive = !bool
     playSoundQuit()
-    
   }
 
-  const getProductsFavorites = async (index, idProduct) => {
-    console.log(index, "este es el index")
-
+  const getProductsFavorites = async (idProduct) => {
     axios.get('https://abarrotes.msalazar.dev/jsonapi/node/favoritos', {
       headers: {
         'Content-Type': 'application/json'
       }
     })
     .then(function (response) {
-      for (const id of response.data.data) {
-       deleteNodeFavorites(id.attributes.drupal_internal__nid)
-      }
-      
-      //deleteNodeFavorites(idProduct )
+       response.data.data.forEach(element => {
+         console.log(idProduct, element.attributes.field_id_producto)
+         if(idProduct===element.attributes.field_id_producto) {
+           deleteNodeFavorites(element.attributes.drupal_internal__nid)
+         }
+       });
     })
     .catch(function (error) {
       console.log(error ,"getProducts");
@@ -166,7 +166,7 @@ function ModalBimbo() {
         headers: {'Content-Type': 'application/json', Authorization: 'Basic Og=='},
       };
       axios.request(options).then(function (response) {
-        //response.data.field_visible = false
+        alert("NOdo elimindado")
         getProducts()
       }).catch(function (error) {
       }); 
@@ -174,6 +174,7 @@ function ModalBimbo() {
 
   useEffect(() => {
     getProducts()
+  
   }, [])
   return (
     <ScrollView>
@@ -207,6 +208,7 @@ function ModalBimbo() {
                         index,
                         producto.attributes.field_isactive,
                         producto.attributes.drupal_internal__nid,
+                        producto.attributes.drupal_internal__vid,
                         ),
                       setEstado(!estado)
                     }}

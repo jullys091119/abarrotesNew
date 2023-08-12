@@ -27,6 +27,7 @@ function Favorites() {
       }
     })
     .then(function (response) {
+      console.log(response.data, "response favorites")
       setProductos(response.data.data)
     })
     .catch(function (error) {
