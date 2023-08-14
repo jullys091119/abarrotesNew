@@ -61,37 +61,33 @@ function HomeScreen({ navigation }) {
               />
             </View>
             <View style={styles.navBarBox}>
-              <ScrollView
+              <FlatList
+                keyExtractor={(item) => item.id}
+                data={productos}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-                style={{flex: 1}}
-              >
-                <View style={{flex: 1}}>
-                  <FlatList
-                    keyExtractor={(item) => item.id}
-                    data={productos}
-                    renderItem={({ item, index }) => {
-                      return (
-                        <Card style={styles.card}>
-                          <Image
-                            source={{
-                              uri:
-                              "https://abarrotes.msalazar.dev" +
-                              imagen.included[index].attributes.uri.url,
-                            }}
-                            style={{
-                              width: 120,
-                              height: 90,
-                              borderRadius: 10,
-                            }}
-                            resizeMode="contain"
-                          />
-                        </Card>
-                      );
-                    }}
-                  />
-                </View>
-              </ScrollView>
+                renderItem={({ item, index }) => {
+                  return (
+                    <View style={{display: "flex", flexDirection: "row"}}>
+                      <Card style={styles.card}>
+                        <Image
+                          source={{
+                            uri:
+                            "https://abarrotes.msalazar.dev" +
+                            imagen.included[index].attributes.uri.url,
+                          }}
+                          style={{
+                            width: 70,
+                            height: 90,
+                            alignSelf: "center"
+                          }}
+                          resizeMode="contain"
+                        />
+                      </Card>
+                    </View>
+                  );
+                }}
+              /> 
             </View>
           </View>
         </ScrollView>
@@ -136,11 +132,13 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: 'white',
-    padding: 16,
     borderRadius: 8,
     marginBottom: 8,
     elevation: 3,
-    flexDirection: 'row', // Por defecto, pero puedes ajustarlo según sea necesario
+    marginRight: 20,
+    height: 140,
+    width: 140,
+    padding: 10
   }
 })
 

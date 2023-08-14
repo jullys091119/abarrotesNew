@@ -45,7 +45,6 @@ const Products = ({navigation}) => {
     <Layout>
       <ScrollView>
         <Layout style={{  display:"flex", flexDirection: "row", justifyContent: "center", flexWrap:"wrap", gap:10  }}>
-         
           {inventario.map((producto, index) => {
             return (
               <Animatable.View key={index} animation="flipInX" duration={2000}>
