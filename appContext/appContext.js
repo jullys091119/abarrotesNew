@@ -11,27 +11,17 @@ export const StateProvider = ({ children,navigation }) => {
  const [user, setUser] = useState('admin');
  const [password, setpassword] = useState('root')
  const [token,setToken] = useState('')
- const [nombreUser, setNombreUser] =  useState("")
- const [apellidoUser, setApellidoUser] =  useState("")
- const [direccionUser, setDireccionUser] = useState("")
- const [telefonoUser,setTelefonoUser] = useState()
- const [emailUser, setEmailUser] = useState('')
- const [foto, setFoto] = useState()
+ const [nameUser, setNameUser] =  useState("")
  const [uid, setUid] = useState()
+ const [imagen, setImagen] = useState({})
+ const [productos, setProductos] = useState({})
 
- //Funciones
 
-  //opteniendo uid
   const getUid = async () => {
    const uidUser = await AsyncStorage.getItem("@UID")
    setUid(uidUser)
   }
- 
- //opteniendo datos de usuario
- 
- //Logueandote
- 
-  //Removiendo Usuario
+
   const userRemove= async()=> {
     try {
       await AsyncStorage.removeItem("@user")
@@ -40,14 +30,12 @@ export const StateProvider = ({ children,navigation }) => {
       console.log(error, "error en el catech")
     }
   }
-    
-  //opteniendo token
+
   const gettingToken=async()=>{
     const currentToken = await AsyncStorage.getItem("@token")
     setToken(currentToken)
   }
   
-  //removiendo token
   const tokenDelete=async()=> {
     try {
       await AsyncStorage.removeItem("@token")
@@ -71,10 +59,21 @@ export const StateProvider = ({ children,navigation }) => {
     });  
   }
 
+  const getUserName = async () => {
+    try {
+      const nameUser = await AsyncStorage.getItem("@name")
+      setNameUser(nameUser)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
 
   useEffect(()=>{
    gettingToken()
    getProducts()
+   getUserName()
   },[])
 
   return (
@@ -84,17 +83,12 @@ export const StateProvider = ({ children,navigation }) => {
      setpassword,
      tokenDelete,
      userRemove,
-     foto,
      user,
      password,
      token,
-     nombreUser,
-     apellidoUser,
-     direccionUser,
-     telefonoUser,
-     emailUser,
-     
-
+     imagen,
+     productos,
+     nameUser
     }}>
       {children}
     </StateContext.Provider>

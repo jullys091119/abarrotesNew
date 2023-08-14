@@ -1,167 +1,150 @@
-import { ScrollView, StyleSheet, Text, View, Image } from 'react-native';
-import { Card, Layout } from '@ui-kitten/components';
-import React, {  useEffect, useState } from 'react';
-import axios from 'axios';
-import Animated,
- {
-  useSharedValue,
-  useAnimatedStyle,
-  interpolate,
-  withDelay,
-  withRepeat,
-  withTiming
-} from "react-native-reanimated";
+import { ScrollView, StyleSheet, Text, View, Image, FlatList } from "react-native";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Card, Layout, Input, Icon } from "@ui-kitten/components";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 //Context API
-import {useMyContext} from '../appContext/appContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useMyContext } from "../appContext/appContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-function HomeScreen({navigation}) {
-  const [imagen,setImagen] = useState({})
-  const [token,setToken] = useState('')
-  let banner = Object.values(imagen)
+function HomeScreen({ navigation }) {
+  const [token, setToken] = useState("");
+   
+  const {nameUser, productos, imagen} = useMyContext()
+  //let inventario = Object.values(productosInventory)
+  //console.log(imagen.included[0].attributes.uri.url)
+   
+  const IconMenu =(props)=>(
+    <MaterialCommunityIcons name="menu-open" color="black" size={25}  style={styles.iconMenu}/>
+  )
   
-  const getTokenLocalStorage = async () => {
-    try {
-     const currentToken = await AsyncStorage.getItem('@token')
-     setToken(currentToken)
-    } catch (e) {
-      console.log(e)
-    }
-  }
- 
-  console.log(token)
+  const IconShopCar =(props)=>(
+    <MaterialCommunityIcons name="cart-outline" color="black" size={25}  style={styles.iconMenu}/>
+  )
 
- 
-  const Ring = ({ delay }) => {
-    const ring = useSharedValue(0);
+  const SearchIcon =(props)=>(
+    <Icon
+      style={styles.icon}
+      fill='#8F9BB3'
+      name='search-outline'
+   />
+  )
 
-    const ringStyle = useAnimatedStyle(() => {
-      return {
-        opacity: 0.8 - ring.value,
-        transform: [
-          {
-            scale: interpolate(ring.value, [0, 1], [1, 3]),
-          },
-        ],
-      };
-    });
 
-    useEffect(()=>{
-      ring.value = withDelay(
-        delay,
-        withRepeat(
-          withTiming(1, {
-            duration: 4000,
-          }),
-          -1,
-          false
-        )
-      );
-    },[])
-    return <Animated.View style={[styles.ring, ringStyle]} />;
-  };
-
-  const getBanners =()=> {
-    axios.get('https://abarrotes.msalazar.dev/jsonapi/node/banners_ofertas?include=field_img_banner', {
-   
-    })
-    .then(function (response) {
-      setImagen(response.data);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  }
-
-  const login = () => {
-    navigation.replace("Login")
-  }
-   
-  useEffect(()=>{
-    getBanners()
-    getTokenLocalStorage()
-   
-  },[])
+  useEffect(() => {}, []);
 
   return (
     <>
-      <ScrollView>
-       { 
-        banner.map((item,index)=>{
-          return(
-            <Layout key={index}
-             style={styles.card}
-            >
-              <Image
-               source={{uri: `https://abarrotes.msalazar.dev` + imagen.included[index].attributes.uri.url}} 
-               style={{
-                height: 160,
-                width:  "100%",
-                resizeMode: 'cover',
-              }}
-              />
+      <SafeAreaView style={styles.container}>
+        <ScrollView>
+          <View>
+            <View style={styles.header}>
+              <IconMenu />
+              <IconShopCar />
+            </View>
+            <View style={styles.welcomeUser}>
               <Text
-                style={{
-                  textAlign:"center",
-                  fontWeight: "900",
-                  marginVertical: 2,
-                  color: "#42AAFF"
-                }}
+                style={{ fontFamily: "Bela", fontSize: 30, fontWeight: "100" }}
               >
-                {imagen.data[index].attributes.field_t}
+                Hola, {nameUser}
               </Text>
-            </Layout>
-          )
-        })
-       }
-      </ScrollView>
-        {
-          token==null?
-          (<Card style={{backgroundColor:"red", paddingHorizontal: 30, width: "100%", height: 60}} onPress={()=>{login()}} >
-            <Text style={{ color: "white", fontWeight:"400"}}>Presione aqui para iniciar sesion</Text>
-            <Ring delay={0} />
-            <Ring delay={1000} />
-            <Ring delay={2000} />
-            <Ring delay={3000} />
-          </Card>):null
-        }   
+              <Text style={{ fontFamily: "BelaRegular", color: "gray" }}>
+                Es hora de encontrar tu producto!
+              </Text>
+            </View>
+            <View style={styles.searchProduct}>
+              <Input
+                style={styles.inputSearch}
+                placeholder="Buscar Producto"
+                accessoryLeft={<SearchIcon />}
+                onChangeText={(nextValue) => setValue(nextValue)}
+              />
+            </View>
+            <View style={styles.navBarBox}>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+              >
+                <View>
+                  <FlatList
+                    style={styles.navBar}
+                    keyExtractor={(item) => item.id}
+                    data={productos}
+                    renderItem={({ item, index }) => {
+                      return (
+                        <Card>
+                          <Image
+                            source={{
+                              uri:
+                                "https://abarrotes.msalazar.dev" +
+                                imagen.included[index].attributes.uri.url,
+                            }}
+                            style={{
+                              width: 120,
+                              height: 100,
+                              alignSelf: "center",
+                              borderRadius: 10,
+                              marginVertical: 10,
+                            }}
+                            resizeMode="contain"
+                          />
+                        </Card>
+                      );
+                    }}
+                  />
+                </View>
+              </ScrollView>
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 }
-styles = StyleSheet.create({
-  card: {
-    width: '100%',
-    marginVertical: 10
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#f5f5f5",
+    flex: 1
   },
-  ring: {
-    position: "absolute",
-    width: 17,
-    height: 17,
-    borderRadius: 40,
-    borderColor: "white",
-    borderWidth: 3,
-    right: 20,
-    top: 17,
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 70
   },
-  btnLogin: {
-    backgroundColor: "red",
-    position:"absolute",
-    bottom:0,
-    zIndex: 4,
-    width:"100%",
-    display:"flex",
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+  iconMenu: {
     paddingHorizontal: 30,
+    paddingVertical: 20,
   },
-  showBtnLogin: {
-    display: "flex"
+  welcomeUser: {
+    height: 90,
+    paddingHorizontal: 30
   },
-  hiddenBtnLogin: {
-    display: "none"
+  searchProduct: {
+    height: 90,
+    marginHorizontal: 30,
+    marginVertical: 0
+  },
+  icon: {
+    width: 24,
+    height: 24
+  },
+  inputSearch: {
+    borderRadius: 13,
+  },
+  navBarBox: {
+    paddingHorizontal: 34,
+    marginTop: -30
+  },
+  navBar: {
+   display: "flex",
+   flexDirection: "row",
+   gap: 15,
+   overflow:"hidden",
   }
 })
 
 
-export default HomeScreen
+export default HomeScreen;
