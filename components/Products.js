@@ -50,18 +50,18 @@ const Products = ({navigation}) => {
             return (
               <Animatable.View key={index} animation="flipInX" duration={2000}>
                 <Card  style={{width: 160, height: 150, marginVertical: 10}} onPress={()=>{openProducts(index + 1)}}>
-                    <Image               
-                      source={{uri: `https://abarrotes.msalazar.dev` + imagen.included[index].attributes.uri.url}} 
-                      style={{
-                        width: 120,
-                        height: 100,
-                        alignSelf: "center",
-                        borderRadius: 10,
-                        marginVertical: 10
-                      }}
-                      resizeMode="contain"
-                    />
-                  </Card>
+                  <Image               
+                    source={{uri: `https://abarrotes.msalazar.dev` + imagen.included[index].attributes.uri.url}} 
+                    style={{
+                      width: 120,
+                      height: 100,
+                      alignSelf: "center",
+                      borderRadius: 10,
+                      marginVertical: 10
+                    }}
+                    resizeMode="contain"
+                  />
+                </Card>
               </Animatable.View>
             );
           })}

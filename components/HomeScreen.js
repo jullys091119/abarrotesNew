@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View, Image, FlatList } from "react-native";
+import { ScrollView, StyleSheet, Text, View, Image, FlatList, VirtualizedList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Card, Layout, Input, Icon } from "@ui-kitten/components";
 import React, { useEffect, useState } from "react";
@@ -13,8 +13,6 @@ function HomeScreen({ navigation }) {
   const [token, setToken] = useState("");
    
   const {nameUser, productos, imagen} = useMyContext()
-  //let inventario = Object.values(productosInventory)
-  //console.log(imagen.included[0].attributes.uri.url)
    
   const IconMenu =(props)=>(
     <MaterialCommunityIcons name="menu-open" color="black" size={25}  style={styles.iconMenu}/>
@@ -66,27 +64,25 @@ function HomeScreen({ navigation }) {
               <ScrollView
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
+                style={{flex: 1}}
               >
-                <View>
+                <View style={{flex: 1}}>
                   <FlatList
-                    style={styles.navBar}
                     keyExtractor={(item) => item.id}
                     data={productos}
                     renderItem={({ item, index }) => {
                       return (
-                        <Card>
+                        <Card style={styles.card}>
                           <Image
                             source={{
                               uri:
-                                "https://abarrotes.msalazar.dev" +
-                                imagen.included[index].attributes.uri.url,
+                              "https://abarrotes.msalazar.dev" +
+                              imagen.included[index].attributes.uri.url,
                             }}
                             style={{
                               width: 120,
-                              height: 100,
-                              alignSelf: "center",
+                              height: 90,
                               borderRadius: 10,
-                              marginVertical: 10,
                             }}
                             resizeMode="contain"
                           />
@@ -136,13 +132,15 @@ const styles = StyleSheet.create({
   },
   navBarBox: {
     paddingHorizontal: 34,
-    marginTop: -30
+    marginTop: -30,
   },
-  navBar: {
-   display: "flex",
-   flexDirection: "row",
-   gap: 15,
-   overflow:"hidden",
+  card: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 8,
+    elevation: 3,
+    flexDirection: 'row', // Por defecto, pero puedes ajustarlo según sea necesario
   }
 })
 
