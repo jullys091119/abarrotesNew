@@ -3,6 +3,8 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export const StateContext = createContext(null);
 import axios from 'axios';
+import { API_URL} from '@env';
+
 export const useMyContext = () => useContext(StateContext);
 
 export const StateProvider = ({ children,navigation }) => {
@@ -54,19 +56,25 @@ export const StateProvider = ({ children,navigation }) => {
     }
   } 
 
-  // const getToken = async () => {
-  //   await axios.get("https://abarrotes.msalazar.dev/session/token", {
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     }
-  //   }).then((response)=>{
-  //     console.log(response.data,"response,data")
-  //   })
-  // }
+  const getProducts = () => {
+    axios.get(API_URL + 'img_proveedores?include=field_img_proveedores', {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(function (response) {
+      setImagen(response.data)
+      setProductos(response.data.data)
+    })
+    .catch(function (error) {
+      console.log(error);
+    });  
+  }
 
-//UseEffecT
+
   useEffect(()=>{
    gettingToken()
+   getProducts()
   },[])
 
   return (
