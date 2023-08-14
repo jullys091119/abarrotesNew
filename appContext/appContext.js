@@ -17,6 +17,23 @@ export const StateProvider = ({ children,navigation }) => {
  const [productos, setProductos] = useState({})
 
 
+  const login =  () => {
+    return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
+    "name": user,
+    "pass": password,
+      headers : {
+      "Content-Type" : "application/json",
+      },
+    })
+    .then(async function (response) {
+      return response.status
+    })
+    .catch(function (error) {
+      console.log(error, "error de logueo")
+    });
+  }
+
+
   const getUid = async () => {
    const uidUser = await AsyncStorage.getItem("@UID")
    setUid(uidUser)
@@ -83,6 +100,7 @@ export const StateProvider = ({ children,navigation }) => {
      setpassword,
      tokenDelete,
      userRemove,
+     login,
      user,
      password,
      token,
