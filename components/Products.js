@@ -11,21 +11,21 @@ const Products = ({navigation}) => {
   const [imagen,setImagen] = useState({})
   let inventario = Object.values(productos)
 
-  // const getProducts = () => {
-  //   //llamada axios para obtener los productos
-  //   axios.get(URL_BASE, {
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     }
-  //   })
-  //   .then(function (response) {
-  //     setImagen(response.data)
-  //     setProductos(response.data.data)
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error);
-  //   });  
-  // }
+  const getProducts = () => {
+    //llamada axios para obtener los productos
+    axios.get(URL_BASE, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(function (response) {
+      setImagen(response.data)
+      setProductos(response.data.data)
+    })
+    .catch(function (error) {
+      console.log(error);
+    });  
+  }
 
   const openProducts = (data) => {
     switch(data) {

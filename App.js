@@ -22,6 +22,7 @@ import UpdateUser from './modalScreen/UpdateUser';
 import { Register } from './modalScreen/Register';
 
 import { StateProvider, useMyContext } from './appContext/appContext';
+import { useFonts } from 'expo-font';
 
 const Tab = createBottomTabNavigator();
 
@@ -163,6 +164,11 @@ function MyTabs({navigation}) {
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [fontLoaded] =useFonts({
+    Bela: require("./assets/fonts/Belanosima-SemiBold.ttf"),
+    BelaRegular: require("./assets/fonts/Belanosima-Regular.ttf")
+  })
+  if(!fontLoaded) return null
   return (
     <StateProvider>
     <>
@@ -269,7 +275,6 @@ export default function App() {
             }
             )}
             >
-
             </Stack.Screen>
           </Stack.Navigator>
           <StatusBar style="auto" />
