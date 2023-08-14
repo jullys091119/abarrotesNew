@@ -10,31 +10,16 @@ const Login = ({navigation}) => {
   const [secureTextEntry, setSecureTextEntry] = React.useState(true);
   const [user,setUser] = useState("admin")
   const [password, setpassword] = useState("root")
+  const {login} = useMyContext()
 
-  const login =  () => {
-    axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
-     "name": user,
-     "pass": password,
-      headers : {
-       "Content-Type" : "application/json",
-      },
-    })
-    .then(async function (response) {
-      console.log("Bienvenido logueado")
-      setTokenLocalStorage(response.data.csrf_token)
-      await AsyncStorage.setItem("@UID", response.data.current_user.uid)
-      navigation.replace("MyTabs")
-    })
-    .catch(function (error) {
-      console.log(error, "error de logueo")
-    });
-  }
+  const loginBtn = async () => {
+    let status = await login()
+    console.log(status,"status")
+     if (status == 200) {
+       navigation.navigate("HomeScreen")
+     }
+  } 
 
-  //colocando token
-  const setTokenLocalStorage = async (token) => {
-    await AsyncStorage.setItem("@token", token)
-    console.log("se metio a la local storage el token")
-  }
   
   return (
     <Layout style={styles.container}>
@@ -59,7 +44,6 @@ const Login = ({navigation}) => {
             label='Contraseña'
             size='large'  
             placeholder='Ingresa tu contrasena'
-            // caption={renderCaption}
             secureTextEntry={secureTextEntry}
             onChangeText={password => setpassword(password)}
             style={[styles.inputRadius, styles.input]}
@@ -74,7 +58,7 @@ const Login = ({navigation}) => {
           </Layout>
 
           <Layout>
-            <Button style={styles.button} size='large' onPress={login}>
+            <Button style={styles.button} size='large' onPress={()=>{loginBtn()}}>
               Iniciar sesion
             </Button>
           </Layout>
@@ -98,7 +82,6 @@ const styles = StyleSheet.create({
     captionText: {
       fontSize: 12,
       fontWeight: "400",
-      // fontFamily: "opensans-regular",
       color: "#8F9BB3",
     },
     inputRadius: {
