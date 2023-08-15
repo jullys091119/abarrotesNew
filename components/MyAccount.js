@@ -119,7 +119,7 @@ function MyAccount({navigation}) {
       tokenDelete()
       userRemove()
       photoRemove()
-      navigation.replace("MyTabs")
+      navigation.replace("Login")
 
     }).catch(function(error){
       console.log(error)

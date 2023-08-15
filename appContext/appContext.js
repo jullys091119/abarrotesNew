@@ -8,7 +8,7 @@ import axios from 'axios';
 export const useMyContext = () => useContext(StateContext);
 
 export const StateProvider = ({ children,navigation }) => {
- const [user, setUser] = useState('admin');
+ const [user, setUser] = useState('saravic');
  const [password, setpassword] = useState('root')
  const [token,setToken] = useState('')
  const [nameUser, setNameUser] =  useState("")
@@ -26,6 +26,7 @@ export const StateProvider = ({ children,navigation }) => {
       },
     })
     .then(async function (response) {
+      getDataUser(response.data.current_user.uid)
       return response.status
     })
     .catch(function (error) {
@@ -90,19 +91,33 @@ export const StateProvider = ({ children,navigation }) => {
     });  
   }
 
-  const getUserName = async () => {
-    try {
-      const nameUser = await AsyncStorage.getItem("@name")
-      setNameUser(nameUser)
-    } catch (error) {
-      console.log(error)
-    }
+
+  const getDataUser = async (uid)=> {
+    await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
+      headers: {
+        "Content-Type" : "application/json",
+      },
+    }).then(async(response) =>{
+      console.log(response.data)
+      //setUidStorage(response.data.uid[0].value)
+      setNameUser(response.data.field_nombre_usuario[0].value)
+      //setApellidoUser(response.data.field_apellidos_usuario[0].value)
+      //setDireccionUser(response.data.field_direccion_usuario[0].value)
+      //setTelefonoUser(response.data.field_telefono_usuario[0].value)
+      //setEmailUser(response.data.field_email_usuario[0].value)
+      await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
+      // await AsyncStorage.setItem("@lastname", response.data.field_apellidos_usuario[0].value)
+      // await AsyncStorage.setItem("@address", response.data.field_direccion_usuario[0].value)
+      // await AsyncStorage.setItem("@email", response.data.field_email_usuario[0].value)
+      // await AsyncStorage.setItem("@phone", response.data.field_telefono_usuario[0].value)
+    })
+
   }
+  
 
   useEffect(()=>{
    gettingToken()
    getProducts()
-   getUserName()
   },[])
 
   return (

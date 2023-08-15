@@ -175,6 +175,11 @@ export default function App() {
           <NavigationContainer style={styles.container}>
             <Stack.Navigator>
               <Stack.Screen
+                name="MyTabs"
+                component={MyTabs}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
                name="Loading"
                component={Loading}
                options={{ headerShown: false }}
@@ -209,11 +214,6 @@ export default function App() {
                 options={{ headerShown: false }}
               />
 
-              <Stack.Screen
-                name="MyTabs"
-                component={MyTabs}
-                options={{ headerShown: false }}
-              />
               <Stack.Screen
                 name="Register"
                 component={Register}

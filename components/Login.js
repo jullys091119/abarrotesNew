@@ -8,15 +8,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Login = ({navigation}) => {
 
   const [secureTextEntry, setSecureTextEntry] = React.useState(true);
-  const [user,setUser] = useState("admin")
-  const [password, setpassword] = useState("root")
-  const {login} = useMyContext()
+
+  const {login, user, password} = useMyContext()
 
   const loginBtn = async () => {
     let status = await login()
     console.log(status,"status")
      if (status == 200) {
-       navigation.navigate("HomeScreen")
+       navigation.navigate("MyTabs")
      }
   } 
 
