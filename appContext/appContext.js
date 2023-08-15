@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export const StateContext = createContext(null);
 import axios from 'axios';
-import { API_URL} from '@env';
+//import { API_URL} from '@env';
 
 export const useMyContext = () => useContext(StateContext);
 
@@ -30,9 +30,22 @@ export const StateProvider = ({ children,navigation }) => {
     })
     .catch(function (error) {
       console.log(error, "error de logueo")
+
     });
+
   }
 
+  const getToken = () => {
+    axios.post('https://abarrotes.msalazar.dev/session/token?_format=json', {
+      headers : {
+        "Content-Type" : "application/json",
+      },
+    }).then(res=>{
+      setToken(res.data)
+    }).catch(err=>{
+      console.log(err)
+    })
+  }
 
   const getUid = async () => {
    const uidUser = await AsyncStorage.getItem("@UID")
@@ -62,7 +75,7 @@ export const StateProvider = ({ children,navigation }) => {
   } 
 
   const getProducts = () => {
-    axios.get(API_URL + 'img_proveedores?include=field_img_proveedores', {
+    axios.get('https://abarrotes.msalazar.dev/jsonapi/node/img_proveedores?include=field_img_proveedores', {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -85,12 +98,11 @@ export const StateProvider = ({ children,navigation }) => {
     }
   }
 
-
-
   useEffect(()=>{
    gettingToken()
    getProducts()
    getUserName()
+   getToken()
   },[])
 
   return (
@@ -101,6 +113,7 @@ export const StateProvider = ({ children,navigation }) => {
      tokenDelete,
      userRemove,
      login,
+     getToken,
      user,
      password,
      token,

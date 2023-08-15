@@ -26,9 +26,9 @@ import ModalBimbo from "./modalScreen/Bimbo";
 import Login from "./components/Login";
 import UpdateUser from "./modalScreen/UpdateUser";
 import { Register } from "./modalScreen/Register";
-
 import { StateProvider, useMyContext } from "./appContext/appContext";
 import { useFonts } from "expo-font";
+import { Loading } from "./components/Loading";
 
 const Tab = createBottomTabNavigator();
 
@@ -174,6 +174,11 @@ export default function App() {
         <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
           <NavigationContainer style={styles.container}>
             <Stack.Navigator>
+              <Stack.Screen
+               name="Loading"
+               component={Loading}
+               options={{ headerShown: false }}
+              />
               <Stack.Screen
                 name="Login"
                 component={Login}
