@@ -30,7 +30,6 @@ export const StateProvider = ({ children,navigation }) => {
     })
     .catch(function (error) {
       console.log(error, "error de logueo")
-
     });
 
   }
@@ -40,8 +39,8 @@ export const StateProvider = ({ children,navigation }) => {
       headers : {
         "Content-Type" : "application/json",
       },
-    }).then(res=>{
-      setToken(res.data)
+    }).then( async res=>{
+        await AsyncStorage.setItem("@token", res.data)
     }).catch(err=>{
       console.log(err)
     })
@@ -63,7 +62,9 @@ export const StateProvider = ({ children,navigation }) => {
 
   const gettingToken=async()=>{
     const currentToken = await AsyncStorage.getItem("@token")
+    //console.log(currentToken, "current tookne")
     setToken(currentToken)
+    return token
   }
   
   const tokenDelete=async()=> {
@@ -102,7 +103,6 @@ export const StateProvider = ({ children,navigation }) => {
    gettingToken()
    getProducts()
    getUserName()
-   getToken()
   },[])
 
   return (
@@ -114,9 +114,9 @@ export const StateProvider = ({ children,navigation }) => {
      userRemove,
      login,
      getToken,
+     gettingToken,
      user,
      password,
-     token,
      imagen,
      productos,
      nameUser
