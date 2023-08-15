@@ -2,12 +2,10 @@ import { ScrollView, StyleSheet, Text, View, Image, FlatList, VirtualizedList } 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Card, Layout, Input, Icon } from "@ui-kitten/components";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 //Context API
 import { useMyContext } from "../appContext/appContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function HomeScreen({ navigation }) {
   const [token, setToken] = useState("");

@@ -4,15 +4,17 @@ import * as Progress from 'react-native-progress';
 import { useMyContext } from '../appContext/appContext';
 
 export const Loading = ({navigation}) => {
-    const {token} = useMyContext()
+    const {token, gettingToken} = useMyContext()
     const [isLoading, setIsLoading] = useState(true);
     //console.log(token, "cargando token")
-
+    //console.log(getToken)
 
     const renderValidation =()=> {
-        if(token) {
-            navigation.push("HomeScreen")
-        }
+
+      let tk = gettingToken()
+      if(tk) {
+        navigation.push("HomeScreen")
+      }
     }
 
     useEffect(() => {
