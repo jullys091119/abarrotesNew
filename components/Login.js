@@ -3,17 +3,16 @@ import { Text, StyleSheet, TouchableWithoutFeedback, View, TouchableOpacity, Lin
 import { Layout,  Icon, Input, Button} from '@ui-kitten/components';
 import axios from 'axios';
 import {useMyContext} from '../appContext/appContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Login = ({navigation}) => {
 
   const [secureTextEntry, setSecureTextEntry] = React.useState(true);
 
-  const {login, user, password} = useMyContext()
+  const {login, user, password, setUser, setpassword} = useMyContext()
 
   const loginBtn = async () => {
     let status = await login()
-    console.log(status,"status")
      if (status == 200) {
        navigation.navigate("MyTabs")
      }

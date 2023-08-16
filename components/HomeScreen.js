@@ -3,14 +3,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { Card, Layout, Input, Icon } from "@ui-kitten/components";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //Context API
 import { useMyContext } from "../appContext/appContext";
 
 function HomeScreen({ navigation }) {
-  const [token, setToken] = useState("");
    
-  const {nameUser, productos, imagen} = useMyContext()
+  const {productos, imagen, name, getNameUser,getProducts} = useMyContext()
    
   const IconMenu =(props)=>(
     <MaterialCommunityIcons name="menu-open" color="black" size={25}  style={styles.iconMenu}/>
@@ -29,7 +29,9 @@ function HomeScreen({ navigation }) {
   )
 
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    
+  }, []);
 
   return (
     <>
@@ -44,7 +46,7 @@ function HomeScreen({ navigation }) {
               <Text
                 style={{ fontFamily: "Bela", fontSize: 30, fontWeight: "100" }}
               >
-                Hola, {nameUser}
+                Hola, {name}
               </Text>
               <Text style={{ fontFamily: "BelaRegular", color: "gray" }}>
                 Es hora de encontrar tu producto!
