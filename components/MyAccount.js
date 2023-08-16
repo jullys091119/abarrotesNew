@@ -21,14 +21,7 @@ function MyAccount({navigation}) {
   const {tokenDelete, userRemove} = useMyContext()
 
   //Opteniendo el uid  para tomar los datos del usuario
-  const getUidStorage = async () => {
-    try {
-      const uidUser = await AsyncStorage.getItem("@UID")
-      getDataUser(uidUser)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+
 
   //Funcion que toma los datos del usuario
   const getDataUser = async (uid)=> {
@@ -52,14 +45,7 @@ function MyAccount({navigation}) {
 
   }
   
-  //Funcion para meter el uid en localstorage
-  const setUidStorage = async (uid) => {
-    try {
-      await AsyncStorage.setItem("@UID", JSON.stringify(uid)) 
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -133,7 +119,7 @@ function MyAccount({navigation}) {
   useEffect(()=>{
     getTokenLocalStorage()
     getPhoto()
-    getUidStorage()
+    //getUidStorage()
   },[])
 
   return (

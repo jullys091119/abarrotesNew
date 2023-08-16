@@ -2,26 +2,28 @@
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { useMyContext } from '../appContext/appContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Loading = ({navigation}) => {
-    const {token, gettingToken} = useMyContext()
+    const {token, gettingToken, getToken} = useMyContext()
     const [isLoading, setIsLoading] = useState(true);
-    //console.log(token, "cargando token")
+  
     //console.log(getToken)
 
-    const renderValidation =()=> {
-
-      let tk = gettingToken()
-      if(tk) {
-        navigation.push("HomeScreen")
+    const renderValidation = async ()=> {
+      let token = await getToken()
+      if(!token) {
+        navigation.push("Login")
+      } else {
+        navigation.push("MyTabs")
       }
     }
 
     useEffect(() => {
+      renderValidation()
       const timer = setTimeout(() => {
         setIsLoading(false);
       }, 3000);
-      renderValidation()
       return () => clearTimeout(timer);
     }, []);
     
