@@ -10,8 +10,7 @@ import { useMyContext } from "../appContext/appContext";
 
 function HomeScreen({ navigation }) {
    
-  const {productos, imagen, name, getNameUser,getProducts} = useMyContext()
-   
+  const {productos, imagen, name, getUid} = useMyContext()
   const IconMenu =(props)=>(
     <MaterialCommunityIcons name="menu-open" color="black" size={25}  style={styles.iconMenu}/>
   )
@@ -30,7 +29,7 @@ function HomeScreen({ navigation }) {
 
 
   useEffect(() => {
-    
+    getUid()
   }, []);
 
   return (

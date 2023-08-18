@@ -24,27 +24,7 @@ function MyAccount({navigation}) {
 
 
   //Funcion que toma los datos del usuario
-  const getDataUser = async (uid)=> {
-    await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
-      headers: {
-        "Content-Type" : "application/json",
-      },
-    }).then(async(response) =>{
-      setUidStorage(response.data.uid[0].value)
-      setNombreUser(response.data.field_nombre_usuario[0].value)
-      setApellidoUser(response.data.field_apellidos_usuario[0].value)
-      setDireccionUser(response.data.field_direccion_usuario[0].value)
-      setTelefonoUser(response.data.field_telefono_usuario[0].value)
-      setEmailUser(response.data.field_email_usuario[0].value)
-      await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
-      await AsyncStorage.setItem("@lastname", response.data.field_apellidos_usuario[0].value)
-      await AsyncStorage.setItem("@address", response.data.field_direccion_usuario[0].value)
-      await AsyncStorage.setItem("@email", response.data.field_email_usuario[0].value)
-      await AsyncStorage.setItem("@phone", response.data.field_telefono_usuario[0].value)
-    })
-
-  }
-  
+ 
   
 
   const pickImage = async () => {
