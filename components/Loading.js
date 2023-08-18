@@ -12,7 +12,9 @@ export const Loading = ({navigation}) => {
 
     const renderValidation = async ()=> {
       let token = await getToken()
-      if(!token) {
+      await AsyncStorage.setItem("@token", token)
+      tkStorage = await AsyncStorage.getItem("@token")
+      if(!tkStorage) {
         navigation.push("Login")
       } else {
         navigation.push("MyTabs")

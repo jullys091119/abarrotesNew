@@ -25,7 +25,7 @@ export const StateProvider = ({ children,navigation }) => {
       },
     })
     .then(async function (response) {
-      getDataUser(response.data.current_user.uid)
+      await AsyncStorage.setItem("@UID",response.data.current_user.uid)
       return response.status
     })
     .catch(function (error) {
@@ -40,6 +40,7 @@ export const StateProvider = ({ children,navigation }) => {
         "Content-Type" : "application/json",
       },
     }).then( async res=>{
+        console.log(res.data)
         return res.data
     }).catch(err=>{
       console.log(err)
@@ -48,7 +49,7 @@ export const StateProvider = ({ children,navigation }) => {
 
   const getUid = async () => {
    const uidUser = await AsyncStorage.getItem("@UID")
-   setUid(uidUser)
+   getDataUser(uidUser)
   }
 
   const userRemove= async()=> {
@@ -84,12 +85,14 @@ export const StateProvider = ({ children,navigation }) => {
   }
 
   const getDataUser = async (uid)=> {
+  
+    console.log(uid, "uid")
     await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
       headers: {
         "Content-Type" : "application/json",
       },
     }).then(async(response) =>{
-       console.log(response.data)
+       //console.log(response.data)
       //setUidStorage(response.data.uid[0].value)
       //setApellidoUser(response.data.field_apellidos_usuario[0].value)
       //setDireccionUser(response.data.field_direccion_usuario[0].value)
@@ -97,8 +100,10 @@ export const StateProvider = ({ children,navigation }) => {
       //setEmailUser(response.data.field_email_usuario[0].value)
       await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
       const value = await AsyncStorage.getItem('@name');
-      console.log(value)
-      setName(value)
+      console.log(value, "name" )
+      if(value !== null) {
+        setName(value)
+      }
       // await AsyncStorage.setItem("@lastname", response.data.field_apellidos_usuario[0].value)
       // await AsyncStorage.setItem("@address", response.data.field_direccion_usuario[0].value)
       // await AsyncStorage.setItem("@email", response.data.field_email_usuario[0].value)
@@ -113,6 +118,7 @@ export const StateProvider = ({ children,navigation }) => {
 
   useEffect(()=>{
    getProducts()
+   getUid()
   },[])
 
   return (
@@ -125,6 +131,7 @@ export const StateProvider = ({ children,navigation }) => {
      login,
      getToken,
      getProducts,
+     getUid,
      user,
      password,
      imagen,
