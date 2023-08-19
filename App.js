@@ -29,6 +29,7 @@ import { Register } from "./modalScreen/Register";
 import { StateProvider, useMyContext } from "./appContext/appContext";
 import { useFonts } from "expo-font";
 import { Loading } from "./components/Loading";
+import { RenderProducts } from "./components/RenderProducts";
 
 const Tab = createBottomTabNavigator();
 
@@ -165,6 +166,7 @@ export default function App() {
   const [fontLoaded] = useFonts({
     Bela: require("./assets/fonts/Belanosima-SemiBold.ttf"),
     BelaRegular: require("./assets/fonts/Belanosima-Regular.ttf"),
+    Poppins: require("./assets/fonts/Poppins-Light.ttf"),
   });
   if (!fontLoaded) return null;
   return (
@@ -183,6 +185,11 @@ export default function App() {
                 name="MyTabs"
                 component={MyTabs}
                 options={{ headerShown: false }}
+              />
+               <Stack.Screen
+               name="RenderProducts"
+               component={RenderProducts}
+               options={{ headerShown: false }}
               />
               <Stack.Screen
                 name="Login"

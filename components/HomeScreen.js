@@ -4,13 +4,17 @@ import { Card, Layout, Input, Icon } from "@ui-kitten/components";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ModalBimbo from "../modalScreen/Bimbo";
 
 //Context API
 import { useMyContext } from "../appContext/appContext";
+import { RenderProducts } from "./RenderProducts";
 
 function HomeScreen({ navigation }) {
-   
   const {productos, imagen, name, getUid} = useMyContext()
+  const [selectedCardIndex, setSelectedCardIndex] = useState(null);
+  const [index, setIndex] = useState("")
+
   const IconMenu =(props)=>(
     <MaterialCommunityIcons name="menu-open" color="black" size={25}  style={styles.iconMenu}/>
   )
@@ -27,6 +31,14 @@ function HomeScreen({ navigation }) {
    />
   )
 
+  const openProducts = (index) => {
+    for(let i=0; i< productos.length; i++) {
+      if(index === i) {
+        setSelectedCardIndex(index)
+        setIndex(index)
+      }
+    }
+  }
 
   useEffect(() => {
     getUid()
@@ -35,64 +47,66 @@ function HomeScreen({ navigation }) {
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <ScrollView>
-          <View>
-            <View style={styles.header}>
-              <IconMenu />
-              <IconShopCar />
-            </View>
-            <View style={styles.welcomeUser}>
-              <Text
-                style={{ fontFamily: "Bela", fontSize: 30, fontWeight: "100" }}
-              >
-                Hola, {name}
-              </Text>
-              <Text style={{ fontFamily: "BelaRegular", color: "gray" }}>
-                Es hora de encontrar tu producto!
-              </Text>
-            </View>
-            <View style={styles.searchProduct}>
-              <Input
-                style={styles.inputSearch}
-                placeholder="Buscar Producto"
-                accessoryLeft={<SearchIcon />}
-                onChangeText={(nextValue) => setValue(nextValue)}
-              />
-            </View>
-            <View style={styles.navBarBox}>
-              <FlatList
-                keyExtractor={(item) => item.id}
-                data={productos}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item, index }) => {
-                  return (
-                    <View style={{display: "flex", flexDirection: "row"}}>
-                      <Card style={styles.card}>
-                        <Image
-                          source={{
-                            uri:
-                            "https://abarrotes.msalazar.dev" +
-                            imagen.included[index].attributes.uri.url,
-                          }}
-                          style={{
-                            width: 70,
-                            height: 90,
-                            alignSelf: "center"
-                          }}
-                          resizeMode="contain"
-                        />
-                      </Card>
-                    </View>
-                  );
-                }}
-              /> 
-            </View>
+        <View>
+          <View style={styles.header}>
+            <IconMenu />
+            <IconShopCar />
           </View>
-        </ScrollView>
+          <View style={styles.welcomeUser}>
+            <Text
+              style={{ fontFamily: "Bela", fontSize: 30, fontWeight: "100" }}
+            >
+              Hola, {name}
+            </Text>
+            <Text style={{ fontFamily: "BelaRegular", color: "gray" }}>
+              Es hora de encontrar tu producto!
+            </Text>
+          </View>
+          <View style={styles.searchProduct}>
+            <Input
+              style={styles.inputSearch}
+              placeholder="Buscar Producto"
+              accessoryLeft={<SearchIcon />}
+              onChangeText={(nextValue) => setValue(nextValue)}
+            />
+          </View>
+          <View style={styles.navBarBox}>
+            <FlatList
+              keyExtractor={(item) => item.id}
+              data={productos}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item, index }) => {
+                return (
+                  <View style={{display: "flex", flexDirection: "row"}}>
+                    <Card style={styles.card} onPress={()=>{openProducts(index + 1)}}>
+                      <Image
+                        source={{
+                          uri:
+                          "https://abarrotes.msalazar.dev" +
+                          imagen.included[index].attributes.uri.url,
+                        }}
+                        style={{
+                          width: 70,
+                          height: 49,
+                          alignSelf: "center"
+                        }}
+                        resizeMode="contain"
+                      />
+                    </Card>
+                  </View>
+                );
+              }}
+            /> 
+            </View>
+        </View>
+        <View style={styles.boxCard}>
+          {selectedCardIndex === index && <RenderProducts/>}
+        </View>
       </SafeAreaView>
     </>
   );
+
 }
 const styles = StyleSheet.create({
   container: {
@@ -135,9 +149,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     elevation: 3,
     marginRight: 20,
-    height: 140,
-    width: 140,
-    padding: 10
+    height: 100,
+    width: 100,
+    padding: 10,
+  },
+  boxCard: {
+    marginTop: 30,
+    height: 300
   }
 })
 

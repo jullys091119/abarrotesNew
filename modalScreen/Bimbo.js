@@ -18,21 +18,7 @@ function ModalBimbo() {
   let inventoryBimbo = Object.values(productos)
 
 
-  const getProducts=()=>{
-    axios.get(URL_BASE, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(function (response) {
-      setImagen(response.data)
-      setProductos(response.data.data)
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  }
-
+ 
   async function playSoundAdd() {
     const {sound} = await Audio.Sound.createAsync(require('../src/iphone_connect.mp3'))
     setSound(sound);
@@ -178,7 +164,7 @@ function ModalBimbo() {
   }, [])
   return (
     <ScrollView>
-      <Layout style={{  display:"flex", flexDirection: "row", justifyContent: "center", flexWrap:"wrap", gap:10  }}>
+      <Layout style={{  display:"flex", flexDirection: "row", justifyContent: "center", flexWrap:"wrap", gap:10, marginTop: 100  }}>
         {inventoryBimbo.map((producto, index) => {
           // console.log(producto)
           return (

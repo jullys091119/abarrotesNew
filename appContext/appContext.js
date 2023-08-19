@@ -69,7 +69,7 @@ export const StateProvider = ({ children,navigation }) => {
     }
   } 
 
-  const getProducts = () => {
+  const getProveedores = () => {
     axios.get('https://abarrotes.msalazar.dev/jsonapi/node/img_proveedores?include=field_img_proveedores', {
       headers: {
         'Content-Type': 'application/json'
@@ -110,6 +110,8 @@ export const StateProvider = ({ children,navigation }) => {
       // await AsyncStorage.setItem("@phone", response.data.field_telefono_usuario[0].value)
     })
   }
+
+ 
    
 
   
@@ -117,7 +119,7 @@ export const StateProvider = ({ children,navigation }) => {
 
 
   useEffect(()=>{
-   getProducts()
+   getProveedores()
    getUid()
   },[])
 
@@ -130,7 +132,7 @@ export const StateProvider = ({ children,navigation }) => {
      userRemove,
      login,
      getToken,
-     getProducts,
+     getProveedores,
      getUid,
      user,
      password,
