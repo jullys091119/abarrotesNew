@@ -96,4 +96,4 @@ styles = StyleSheet.create({
 		paddingLeft: 15,
 		paddingTop: 13
 	},
-})
+})	
