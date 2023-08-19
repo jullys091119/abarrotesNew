@@ -49,7 +49,6 @@ function HomeScreen({ navigation }) {
       <SafeAreaView style={styles.container}>
         <View>
           <View style={styles.header}>
-            <IconMenu />
             <IconShopCar />
           </View>
           <View style={styles.welcomeUser}>
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
   header: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     height: 70
   },
   iconMenu: {

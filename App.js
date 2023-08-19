@@ -12,11 +12,12 @@ import {
   Button,
   Icon,
 } from "@ui-kitten/components";
+import 'react-native-gesture-handler';
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { default as mapping } from "./mapping.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import HomeScreen from "./components/HomeScreen";
 import Products from "./components/Products";
 import Offert from "./components/Offert";
@@ -30,8 +31,11 @@ import { StateProvider, useMyContext } from "./appContext/appContext";
 import { useFonts } from "expo-font";
 import { Loading } from "./components/Loading";
 import { RenderProducts } from "./components/RenderProducts";
+import { Title } from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
 
 function MyTabs({ navigation }) {
   const [token, setToken] = useState();
@@ -152,16 +156,28 @@ function MyTabs({ navigation }) {
           tabBarStyle: { backgroundColor: "white" },
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="account" color={color} size={30} />
-          ),
-          headerRight: () => <IconRender />,
+            ),
+            headerRight: () => <IconRender />,
         })}
       />
+    
     </Tab.Navigator>
   );
 }
 
-const Stack = createNativeStackNavigator();
-
+function DrawerStackScreen() {
+  return (
+    <Drawer.Navigator 
+      initialRouteName="MyTabs"
+      screenOptions={{
+        headerShown:  false
+      }}  
+    >
+      <Drawer.Screen name="MyTabs" component={MyTabs} />
+      
+    </Drawer.Navigator>
+  );
+}
 export default function App() {
   const [fontLoaded] = useFonts({
     Bela: require("./assets/fonts/Belanosima-SemiBold.ttf"),
@@ -177,16 +193,16 @@ export default function App() {
           <NavigationContainer style={styles.container}>
             <Stack.Navigator>
               <Stack.Screen
+               name="DrawerStack" // Puedes darle el nombre que desees
+               component={DrawerStackScreen}
+               options={{ headerShown: false }}
+              />
+              <Stack.Screen
                name="Loading"
                component={Loading}
                options={{ headerShown: false }}
               />
               <Stack.Screen
-                name="MyTabs"
-                component={MyTabs}
-                options={{ headerShown: false }}
-              />
-               <Stack.Screen
                name="RenderProducts"
                component={RenderProducts}
                options={{ headerShown: false }}
@@ -268,7 +284,7 @@ export default function App() {
                     />
                   ),
                 })}
-              />
+                />
               <Stack.Screen
                 name="UpdateUser"
                 component={UpdateUser}
