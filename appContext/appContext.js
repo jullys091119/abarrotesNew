@@ -7,7 +7,11 @@ import axios from 'axios';
 
 export const useMyContext = () => useContext(StateContext);
 
-export const StateProvider = ({ children,navigation }) => {
+export const useAppContext = () => {
+  return useMyContext
+};
+
+export const StateProvider = ({ children,navigation, MyTabs }) => {
  const [user, setUser] = useState('');
  const [password, setpassword] = useState('')
  const [token,setToken] = useState('')
@@ -15,23 +19,52 @@ export const StateProvider = ({ children,navigation }) => {
  const [imagen, setImagen] = useState({})
  const [productos, setProductos] = useState({})
  const [name, setName] = useState("")
+ const [loged, setIsLogued] = useState(false)
 
   const login =  () => {
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
     "name": user,
     "pass": password,
       headers : {
-      "Content-Type" : "application/json",
+        "Content-Type" : "application/json",
       },
     })
     .then(async function (response) {
-      await AsyncStorage.setItem("@UID",response.data.current_user.uid)
-      return response.status
+      console.log(response.data)
+      currentUid(response.data.current_user.uid)
+      setIsLogued(true)
+      if(loged) {
+        return <MyTabs/>
+      } else { 
+
+        return response.status
+      }
     })
     .catch(function (error) {
       console.log(error, "error de logueo")
     });
+    
+  }
+  
+  const currentUid = async (uid) => {
+    await AsyncStorage.setItem("@UID", uid)
+  }
 
+  //Deslogueandote
+  const logout = () => {
+    return axios.get('https://abarrotes.msalazar.dev/user/logout', {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }).then(function(response){
+      tokenDelete()
+      userRemove()
+      // photoRemove()
+      return response.status
+
+    }).catch(function(error){
+      console.log(error)
+    })
   }
 
   const getToken = () => {
@@ -40,18 +73,26 @@ export const StateProvider = ({ children,navigation }) => {
         "Content-Type" : "application/json",
       },
     }).then( async res=>{
-        console.log(res.data)
-        return res.data
+      console.log(res.data,"token actual")
+      setToken(res.data)
+      setTokenStorage(res.data)
     }).catch(err=>{
       console.log(err)
     })
   }
 
-  const getUid = async () => {
-   const uidUser = await AsyncStorage.getItem("@UID")
-   getDataUser(uidUser)
+  const setTokenStorage = async (tk) => {
+    await AsyncStorage.setItem("@TOKEN", tk)
   }
 
+  const tokenDelete=async()=> {
+    try {
+      await AsyncStorage.removeItem("@TOKEN")
+      console.log("borrando token")
+    } catch (error) {
+      console.log(error)
+    }
+  } 
   const userRemove= async()=> {
     try {
       await AsyncStorage.removeItem("@name")
@@ -61,13 +102,6 @@ export const StateProvider = ({ children,navigation }) => {
     }
   }
 
-  const tokenDelete=async()=> {
-    try {
-      await AsyncStorage.removeItem("@token")
-    } catch (error) {
-      console.log(error)
-    }
-  } 
 
   const getProveedores = () => {
     axios.get('https://abarrotes.msalazar.dev/jsonapi/node/img_proveedores?include=field_img_proveedores', {
@@ -84,43 +118,31 @@ export const StateProvider = ({ children,navigation }) => {
     });  
   }
 
-  const getDataUser = async (uid)=> {
+  const currentUidStorage = async () => {
+   const idUser =  await AsyncStorage.getItem("@UID")
+   getDataUser(idUser)
+  }
   
-    console.log(uid, "uid")
+  const getDataUser = async (uid)=> {
+    console.log(uid,"<<<")
     await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
       headers: {
         "Content-Type" : "application/json",
       },
-    }).then(async(response) =>{
-       //console.log(response.data)
-      //setUidStorage(response.data.uid[0].value)
-      //setApellidoUser(response.data.field_apellidos_usuario[0].value)
-      //setDireccionUser(response.data.field_direccion_usuario[0].value)
-      //setTelefonoUser(response.data.field_telefono_usuario[0].value)
-      //setEmailUser(response.data.field_email_usuario[0].value)
+    }).then(async(response) =>{     
       await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
       const value = await AsyncStorage.getItem('@name');
-      console.log(value, "name" )
       if(value !== null) {
         setName(value)
       }
-      // await AsyncStorage.setItem("@lastname", response.data.field_apellidos_usuario[0].value)
-      // await AsyncStorage.setItem("@address", response.data.field_direccion_usuario[0].value)
-      // await AsyncStorage.setItem("@email", response.data.field_email_usuario[0].value)
-      // await AsyncStorage.setItem("@phone", response.data.field_telefono_usuario[0].value)
-    })
+  
+    }).catch(err => {console.log(err, "error get user")})
   }
 
- 
-   
-
-  
-
-
-
   useEffect(()=>{
+   getToken()
    getProveedores()
-   getUid()
+   console.log(loged)
   },[])
 
   return (
@@ -128,17 +150,17 @@ export const StateProvider = ({ children,navigation }) => {
      setToken,
      setUser,
      setpassword,
-     tokenDelete,
-     userRemove,
      login,
      getToken,
+     logout,
      getProveedores,
-     getUid,
+     currentUidStorage,
      user,
      password,
      imagen,
      productos,
      name,
+     token
      
     }}>
       {children}
