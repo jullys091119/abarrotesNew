@@ -1,47 +1,68 @@
-import { ScrollView, StyleSheet, Text, View, Image, FlatList, VirtualizedList } from "react-native";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  FlatList,
+  VirtualizedList,
+  DrawerLayoutAndroid,
+  Button,
+} from "react-native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Card, Layout, Input, Icon } from "@ui-kitten/components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalBimbo from "../modalScreen/Bimbo";
 
 //Context API
 import { useMyContext } from "../appContext/appContext";
 import { RenderProducts } from "./RenderProducts";
 
+
 function HomeScreen({ navigation }) {
-  const {productos, imagen, name, getUid} = useMyContext()
+  const { productos, imagen, name,   currentUidStorage } = useMyContext();
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
-  const [index, setIndex] = useState("")
+  const [index, setIndex] = useState("");
+  const drawer = useRef(null);
+  const [drawerPosition, setDrawerPosition] = useState('left');
 
-  const IconMenu =(props)=>(
-    <MaterialCommunityIcons name="menu-open" color="black" size={25}  style={styles.iconMenu}/>
-  )
-  
-  const IconShopCar =(props)=>(
-    <MaterialCommunityIcons name="cart-outline" color="black" size={25}  style={styles.iconMenu}/>
-  )
 
-  const SearchIcon =(props)=>(
-    <Icon
-      style={styles.icon}
-      fill='#8F9BB3'
-      name='search-outline'
-   />
-  )
+  const IconMenu = (props) => (
+    <MaterialCommunityIcons
+      name="menu-open"
+      color="black"
+      size={25}
+      style={styles.iconMenu}
+    />
+  );
+
+  const IconShopCar = (props) => (
+    <MaterialCommunityIcons
+      name="cart-outline"
+      color="black"
+      size={25}
+      style={styles.iconMenu}
+    />
+  );
+
+ 
+  const SearchIcon = (props) => (
+    <Icon style={styles.icon} fill="#8F9BB3" name="search-outline" />
+  );
 
   const openProducts = (index) => {
-    for(let i=0; i< productos.length; i++) {
-      if(index === i) {
-        setSelectedCardIndex(index)
-        setIndex(index)
+    for (let i = 0; i < productos.length; i++) {
+      if (index === i) {
+        setSelectedCardIndex(index);
+        setIndex(index);
       }
     }
-  }
+  };
 
   useEffect(() => {
-    getUid()
+    currentUidStorage()
   }, []);
 
   return (
@@ -49,6 +70,7 @@ function HomeScreen({ navigation }) {
       <SafeAreaView style={styles.container}>
         <View>
           <View style={styles.header}>
+            <IconMenu onPress={()=> navigation.openDrawer()} />
             <IconShopCar />
           </View>
           <View style={styles.welcomeUser}>
@@ -77,18 +99,23 @@ function HomeScreen({ navigation }) {
               showsHorizontalScrollIndicator={false}
               renderItem={({ item, index }) => {
                 return (
-                  <View style={{display: "flex", flexDirection: "row"}}>
-                    <Card style={styles.card} onPress={()=>{openProducts(index + 1)}}>
+                  <View style={{ display: "flex", flexDirection: "row" }}>
+                    <Card
+                      style={styles.card}
+                      onPress={() => {
+                        openProducts(index + 1);
+                      }}
+                    >
                       <Image
                         source={{
                           uri:
-                          "https://abarrotes.msalazar.dev" +
-                          imagen.included[index].attributes.uri.url,
+                            "https://abarrotes.msalazar.dev" +
+                            imagen.included[index].attributes.uri.url,
                         }}
                         style={{
                           width: 70,
                           height: 49,
-                          alignSelf: "center"
+                          alignSelf: "center",
                         }}
                         resizeMode="contain"
                       />
@@ -96,27 +123,25 @@ function HomeScreen({ navigation }) {
                   </View>
                 );
               }}
-            /> 
-            </View>
+            />
+          </View>
         </View>
         <View style={styles.boxCard}>
-          {selectedCardIndex === index && <RenderProducts/>}
+          {selectedCardIndex === index && <RenderProducts />}
         </View>
       </SafeAreaView>
     </>
   );
-
 }
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#f5f5f5",
-    flex: 1
   },
   header: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "flex-end",
-    height: 70
+    justifyContent: "space-between",
+    height: 70,
   },
   iconMenu: {
     paddingHorizontal: 30,
@@ -124,16 +149,16 @@ const styles = StyleSheet.create({
   },
   welcomeUser: {
     height: 90,
-    paddingHorizontal: 30
+    paddingHorizontal: 30,
   },
   searchProduct: {
     height: 90,
     marginHorizontal: 30,
-    marginVertical: 0
+    marginVertical: 0,
   },
   icon: {
     width: 24,
-    height: 24
+    height: 24,
   },
   inputSearch: {
     borderRadius: 13,
@@ -143,7 +168,7 @@ const styles = StyleSheet.create({
     marginTop: -30,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 8,
     marginBottom: 8,
     elevation: 3,
@@ -154,9 +179,8 @@ const styles = StyleSheet.create({
   },
   boxCard: {
     marginTop: 30,
-    height: 300
-  }
-})
-
+    height: 300,
+  },
+});
 
 export default HomeScreen;

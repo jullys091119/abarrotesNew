@@ -9,14 +9,18 @@ const Login = ({navigation}) => {
 
   const [secureTextEntry, setSecureTextEntry] = React.useState(true);
 
-  const {login, user, password, setUser, setpassword} = useMyContext()
+  const {login, user, password, setUser, setpassword, getProveedores} = useMyContext()
 
   const loginBtn = async () => {
     let status = await login()
      if (status == 200) {
-       navigation.navigate("MyTabs")
+       navigation.navigate("HomeScreen")
      }
   } 
+  
+  useEffect(()=> {
+
+  })
 
   
   return (

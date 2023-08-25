@@ -18,88 +18,17 @@ function MyAccount({navigation}) {
   const [telefonoUser,setTelefonoUser] = useState()
   const [emailUser, setEmailUser] = useState("")
 
-  const {tokenDelete, userRemove} = useMyContext()
+  const {tokenDelete, userRemove, logout} = useMyContext()
 
-  //Opteniendo el uid  para tomar los datos del usuario
-
-
-  //Funcion que toma los datos del usuario
- 
+  const logoutBtn =  async () => {
+    const status = await logout()
+    if(status === 200) {
+      navigation.push("Login")
+    }
+  }
   
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-     setPhotoLocalStorage(result.assets[0].uri)
-     setImage(result.assets[0].uri)
-    }
-  }
-
-  const setPhotoLocalStorage = async (photo) => {
-    try {
-      await AsyncStorage.setItem('@photo', photo)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  const getPhoto = async () => {
-    const photo = await AsyncStorage.getItem("@photo")
-    setImage(photo)
-  }
-    
-
-  //Removiendo Usuario
-  const photoRemove= async()=> {
-    try {
-      await AsyncStorage.removeItem("@photo")
-      console.log("foto eliminado")
-    } catch(error) {
-      console.log(error, "error en el catech")
-    }
-  }
-    
-  const getTokenLocalStorage = async () => {
-    try {
-     const currentToken = await AsyncStorage.getItem('@token')
-     setToken(currentToken)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-   
-  //Deslogueandote
-  const logout = () => {
-    axios.get('https://abarrotes.msalazar.dev/user/logout', {
-      headers: {
-        "Content-Type": "application/json",
-      }
-    }).then(function(response){
-      tokenDelete()
-      userRemove()
-      photoRemove()
-      navigation.replace("Login")
-
-    }).catch(function(error){
-      console.log(error)
-    })
-  }
-
-  const openRegister = () => {
-    navigation.replace("Register")
-  }
-
   useEffect(()=>{
-    getTokenLocalStorage()
-    getPhoto()
-    //getUidStorage()
   },[])
 
   return (
@@ -119,7 +48,7 @@ function MyAccount({navigation}) {
           />
         )
         }
-        <Text style={styles.textAvatar}  onPress={()=>pickImage()} >Cambiar foto de perfil</Text>
+        {/* <Text style={styles.textAvatar}  onPress={()=>pickImage()} >Cambiar foto de perfil</Text> */}
         <Text style={styles.infoContactTextTitle}>Información del Contacto</Text>
         <Layout style={{ }}>
           <Text style={styles.infoContactText}>Nombre:{"  "}<Text style={styles.contactInfo}>{token?nombreUser:null}</Text></Text>
@@ -130,7 +59,7 @@ function MyAccount({navigation}) {
         </Layout>
        
           <>
-            <Button style={[styles.button, styles.btn]} size='medium' onPress={()=>logout()}>
+            <Button style={[styles.button, styles.btn]} size='medium' onPress={()=>logoutBtn()}>
               Cerrar sesión
             </Button>
             <Layout>

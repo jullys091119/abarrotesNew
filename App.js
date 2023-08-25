@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -12,10 +13,9 @@ import {
   Button,
   Icon,
 } from "@ui-kitten/components";
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import { default as mapping } from "./mapping.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HomeScreen from "./components/HomeScreen";
@@ -32,39 +32,16 @@ import { useFonts } from "expo-font";
 import { Loading } from "./components/Loading";
 import { RenderProducts } from "./components/RenderProducts";
 import { Title } from "react-native-paper";
+import { Context } from "./appContext/appContext";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { useAppContext } from './appContext/appContext';
+
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
-function MyTabs({ navigation }) {
-  const [token, setToken] = useState();
-
-  const getToken = async () => {
-    try {
-      const tokenStorage = await AsyncStorage.getItem("@token");
-      setToken(tokenStorage);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const IconRender = () => {
-    return token ? (
-      <MaterialCommunityIcons
-        name="account-edit"
-        color="white"
-        size={36}
-        onPress={() => {
-          navigation.push("UpdateUser");
-        }}
-      />
-    ) : null;
-  };
-
-  useEffect(() => {
-    getToken();
-  });
+function MyTabs() {
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -156,29 +133,42 @@ function MyTabs({ navigation }) {
           tabBarStyle: { backgroundColor: "white" },
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="account" color={color} size={30} />
-            ),
-            headerRight: () => <IconRender />,
+          ),
+          // headerRight: () => <IconRender />,
         })}
       />
-    
     </Tab.Navigator>
   );
 }
 
-function DrawerStackScreen() {
+
+
+function Article() {
   return (
-    <Drawer.Navigator 
-      initialRouteName="MyTabs"
-      screenOptions={{
-        headerShown:  false
-      }}  
-    >
-      <Drawer.Screen name="MyTabs" component={MyTabs} />
-      
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Article Screen</Text>
+    </View>
+  );
+}
+
+function MyDrawer() {
+  return (
+    <Drawer.Navigator>
+      <Drawer.Screen 
+       name="MyTabs"
+       component={MyTabs}
+      //  options={{
+      //   headerShown: false,
+      // }}
+       />
+      <Drawer.Screen name="Article" component={Article} />
     </Drawer.Navigator>
   );
 }
+
+
 export default function App() {
+  console.log("app")
   const [fontLoaded] = useFonts({
     Bela: require("./assets/fonts/Belanosima-SemiBold.ttf"),
     BelaRegular: require("./assets/fonts/Belanosima-Regular.ttf"),
@@ -186,26 +176,33 @@ export default function App() {
   });
   if (!fontLoaded) return null;
   return (
-    <StateProvider>
+    <StateProvider MyTabs={MyDrawer}>
       <>
         <IconRegistry icons={EvaIconsPack} />
         <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
           <NavigationContainer style={styles.container}>
             <Stack.Navigator>
               <Stack.Screen
-               name="DrawerStack" // Puedes darle el nombre que desees
-               component={DrawerStackScreen}
-               options={{ headerShown: false }}
+                name="MyDrawer"
+                options={{
+                  headerShown: false,
+                }}
+                component={MyDrawer}
               />
               <Stack.Screen
-               name="Loading"
-               component={Loading}
-               options={{ headerShown: false }}
+                name="Loading"
+                component={Loading}
+                options={{ headerShown: false }}
               />
               <Stack.Screen
-               name="RenderProducts"
-               component={RenderProducts}
-               options={{ headerShown: false }}
+                name="MyTabs"
+                component={MyTabs}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="RenderProducts"
+                component={RenderProducts}
+                options={{ headerShown: false }}
               />
               <Stack.Screen
                 name="Login"
@@ -284,7 +281,7 @@ export default function App() {
                     />
                   ),
                 })}
-                />
+              />
               <Stack.Screen
                 name="UpdateUser"
                 component={UpdateUser}

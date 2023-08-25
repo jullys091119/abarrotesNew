@@ -11,23 +11,26 @@ export const Loading = ({navigation}) => {
     //console.log(getToken)
 
     const renderValidation = async ()=> {
-      let token = await getToken()
-      await AsyncStorage.setItem("@token", token)
-      tkStorage = await AsyncStorage.getItem("@token")
+      tkStorage = await AsyncStorage.getItem("@TOKEN")
+      console.log(tkStorage, "token loading")
       if(!tkStorage) {
         navigation.push("Login")
       } else {
+     
         navigation.push("MyTabs")
       }
     }
 
     useEffect(() => {
-      renderValidation()
       const timer = setTimeout(() => {
         setIsLoading(false);
       }, 3000);
       return () => clearTimeout(timer);
     }, []);
+
+    useEffect(()=> {  
+      renderValidation()
+    }, [])
     
     return (
         <View style={styles.container}>
