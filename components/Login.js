@@ -3,25 +3,29 @@ import { Text, StyleSheet, TouchableWithoutFeedback, View, TouchableOpacity, Lin
 import { Layout,  Icon, Input, Button} from '@ui-kitten/components';
 import axios from 'axios';
 import {useMyContext} from '../appContext/appContext';
+import HomeScreen from './HomeScreen';
+
 
 
 const Login = ({navigation}) => {
 
   const [secureTextEntry, setSecureTextEntry] = React.useState(true);
 
-  const {login, user, password, setUser, setpassword, getProveedores} = useMyContext()
+  const {login, user, password, setUser, setpassword, getCredentials} = useMyContext()
 
   const loginBtn = async () => {
     let status = await login()
      if (status == 200) {
-       navigation.navigate("HomeScreen")
+       navigation.navigate("MyTabs")
+       navigation.navigate("MyDrawer")
+       //etCredentials()
      }
+    
   } 
   
   useEffect(()=> {
 
   })
-
   
   return (
     <Layout style={styles.container}>
