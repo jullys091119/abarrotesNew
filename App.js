@@ -21,7 +21,6 @@ import HomeScreen from "./components/HomeScreen";
 import Products from "./components/Products";
 import Offert from "./components/Offert";
 import Favorites from "./components/Favorites";
-import MyAccount from "./components/MyAccount";
 import ModalBimbo from "./modalScreen/Bimbo";
 import Login from "./components/Login";
 import UpdateUser from "./modalScreen/UpdateUser";
@@ -32,8 +31,9 @@ import { Loading } from "./components/Loading";
 import { RenderProducts } from "./components/RenderProducts";
 import { Title } from "react-native-paper";
 import { Context } from "./appContext/appContext";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { Logout } from './utils/helpers';
+import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
+import { logout } from "./utils/helpers";
+
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -96,34 +96,33 @@ function MyTabs() {
   );
 }
 
-// function Notifications({navigation}) {
-//   const {logout} = useMyContext()
-//   useEffect(() => {
-//     logout();
-//     navigation.push("Login");
-//     navigation.push("MyDrawer");
-//   }, []);
-//   return null; //No renderiza ningun componente
-// }
+
+
+function CustomDrawerContent({ navigation }) {
+  return (
+    <DrawerContentScrollView>
+      {/* Agregar contenido personalizado aquí */}
+      <TouchableOpacity>
+        <Text>Cerrar sesion</Text>
+      </TouchableOpacity>
+    </DrawerContentScrollView>
+  );
+}
 
 function MyDrawer() {
  
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator  drawerContent={props => <CustomDrawerContent {...props} />}>
+    
       <Drawer.Screen 
         name="Inicio"
         component={MyTabs}
         options={{
+         headerShown: false,
          
         }}
-      />   
-      {/* <Drawer.Screen 
-        name="logout"
-        component={Notifications}
-        options={{
-         
-        }}
-      />    */}
+      /> 
+
     </Drawer.Navigator>
   );
 

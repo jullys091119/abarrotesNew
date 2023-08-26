@@ -39,21 +39,21 @@ function HomeScreen({ navigation }) {
 
   const IconMenu = (props) => (
     <MaterialCommunityIcons
-      name="menu-open"
+      name="cart-outline"
       color="black"
       size={25}
       style={styles.iconMenu}
     />
   );
 
-  const IconShopCar = (props) => (
+  const IconPower = (props) => (
     <MaterialCommunityIcons
-      name="cart-outline"
-      color="black"
-      size={25}
+      name="power"
+      color="red"
+      size={30}
       style={styles.iconMenu}
       onPress={()=> {logoutBtn()}}
-    />
+      />
   );
   
   const SearchIcon = (props) => (
@@ -78,8 +78,8 @@ function HomeScreen({ navigation }) {
       <SafeAreaView style={styles.container}>
         <View>
           <View style={styles.header}>
-            <IconMenu onPress={()=> navigation.openDrawer()} />
-            <IconShopCar />
+            <IconPower/>
+            <IconMenu/>
           </View>
           <View style={styles.welcomeUser}>
             <Text
@@ -150,10 +150,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     height: 70,
+    marginTop: 40
   },
   iconMenu: {
     paddingHorizontal: 30,
-    paddingVertical: 20,
+    
   },
   welcomeUser: {
     height: 90,
