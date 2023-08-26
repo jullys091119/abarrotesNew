@@ -18,6 +18,7 @@ export const StateProvider = ({ children}) => {
  const [name, setName] = useState("")
  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+
   const login =  () => {
     console.log("login")
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
@@ -82,8 +83,6 @@ export const StateProvider = ({ children}) => {
     }).catch(err => {console.log(err, "error get user")})
   }
   
-
-  
   //Deslogueandote
   const logout = () => {
     return axios.get('https://abarrotes.msalazar.dev/user/logout', {
@@ -94,8 +93,6 @@ export const StateProvider = ({ children}) => {
     }).then(function(response){
       tokenDelete()
       userRemove()
-      // photoRemove()
-      setIsAuthenticated(false);
       return response.status
       
     }).catch(function(error){
