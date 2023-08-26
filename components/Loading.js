@@ -4,33 +4,28 @@ import * as Progress from 'react-native-progress';
 import { useMyContext } from '../appContext/appContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 export const Loading = ({navigation}) => {
-    const {token, gettingToken, getToken} = useMyContext()
+    const {token,getCredentials, getProveedores} = useMyContext()
     const [isLoading, setIsLoading] = useState(true);
   
     //console.log(getToken)
 
     const renderValidation = async ()=> {
-      tkStorage = await AsyncStorage.getItem("@TOKEN")
-      console.log(tkStorage, "token loading")
-      if(!tkStorage) {
-        navigation.push("Login")
-      } else {
-     
-        navigation.push("MyTabs")
-      }
+      let tk = await AsyncStorage.getItem("@TOKEN")
+      console.log(tk, "tk loading")
+      tk?navigation.replace("MyTabs"):navigation.push("Login")
     }
-
+  
     useEffect(() => {
+      renderValidation()
       const timer = setTimeout(() => {
         setIsLoading(false);
       }, 3000);
       return () => clearTimeout(timer);
     }, []);
 
-    useEffect(()=> {  
-      renderValidation()
-    }, [])
+  
     
     return (
         <View style={styles.container}>

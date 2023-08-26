@@ -1,6 +1,5 @@
-import 'react-native-gesture-handler';
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -13,7 +12,7 @@ import {
   Button,
   Icon,
 } from "@ui-kitten/components";
-import "react-native-gesture-handler";
+import 'react-native-gesture-handler';
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { default as mapping } from "./mapping.json";
@@ -34,8 +33,7 @@ import { RenderProducts } from "./components/RenderProducts";
 import { Title } from "react-native-paper";
 import { Context } from "./appContext/appContext";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { useAppContext } from './appContext/appContext';
-
+import { Logout } from './utils/helpers';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -52,29 +50,6 @@ function MyTabs() {
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={30} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Productos"
-        component={Products}
-        options={{
-          headerStyle: {
-            backgroundColor: "red",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-          tabBarLabel: "Productos",
-          tabBarActiveTintColor: "gray",
-          tabBarStyle: { backgroundColor: "white" },
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="shopping-search"
-              color={color}
-              size={30}
-            />
           ),
         }}
       />
@@ -117,54 +92,44 @@ function MyTabs() {
           ),
         }}
       />
-      <Tab.Screen
-        name="Mi Cuenta"
-        component={MyAccount}
-        options={({ navigation }) => ({
-          headerStyle: {
-            backgroundColor: "red",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-          tabBarLabel: "Mi Cuenta",
-          tabBarActiveTintColor: "gray",
-          tabBarStyle: { backgroundColor: "white" },
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" color={color} size={30} />
-          ),
-          // headerRight: () => <IconRender />,
-        })}
-      />
     </Tab.Navigator>
   );
 }
 
-
-
-function Article() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Article Screen</Text>
-    </View>
-  );
-}
+// function Notifications({navigation}) {
+//   const {logout} = useMyContext()
+//   useEffect(() => {
+//     logout();
+//     navigation.push("Login");
+//     navigation.push("MyDrawer");
+//   }, []);
+//   return null; //No renderiza ningun componente
+// }
 
 function MyDrawer() {
+ 
   return (
     <Drawer.Navigator>
       <Drawer.Screen 
-       name="MyTabs"
-       component={MyTabs}
-      //  options={{
-      //   headerShown: false,
-      // }}
-       />
-      <Drawer.Screen name="Article" component={Article} />
+        name="Inicio"
+        component={MyTabs}
+        options={{
+         
+        }}
+      />   
+      {/* <Drawer.Screen 
+        name="logout"
+        component={Notifications}
+        options={{
+         
+        }}
+      />    */}
     </Drawer.Navigator>
   );
+
 }
+
+
 
 
 export default function App() {
@@ -176,7 +141,7 @@ export default function App() {
   });
   if (!fontLoaded) return null;
   return (
-    <StateProvider MyTabs={MyDrawer}>
+    <StateProvider>
       <>
         <IconRegistry icons={EvaIconsPack} />
         <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
@@ -184,21 +149,20 @@ export default function App() {
             <Stack.Navigator>
               <Stack.Screen
                 name="MyDrawer"
-                options={{
-                  headerShown: false,
-                }}
                 component={MyDrawer}
+                options={{ headerShown: false }}
               />
               <Stack.Screen
                 name="Loading"
                 component={Loading}
                 options={{ headerShown: false }}
-              />
+                />
               <Stack.Screen
                 name="MyTabs"
                 component={MyTabs}
                 options={{ headerShown: false }}
               />
+ 
               <Stack.Screen
                 name="RenderProducts"
                 component={RenderProducts}

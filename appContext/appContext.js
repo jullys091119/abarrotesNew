@@ -7,21 +7,19 @@ import axios from 'axios';
 
 export const useMyContext = () => useContext(StateContext);
 
-export const useAppContext = () => {
-  return useMyContext
-};
-
-export const StateProvider = ({ children,navigation, MyTabs }) => {
+export const StateProvider = ({ children}) => {
  const [user, setUser] = useState('');
  const [password, setpassword] = useState('')
- const [token,setToken] = useState('')
+ const [tokenLogout,setTokenLogout] = useState('')
+ const [token, setToken] = useState("")
  const [uid, setUid] = useState()
  const [imagen, setImagen] = useState({})
  const [productos, setProductos] = useState({})
  const [name, setName] = useState("")
- const [loged, setIsLogued] = useState(false)
+ const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login =  () => {
+    console.log("login")
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
     "name": user,
     "pass": password,
@@ -31,60 +29,80 @@ export const StateProvider = ({ children,navigation, MyTabs }) => {
     })
     .then(async function (response) {
       console.log(response.data)
-      currentUid(response.data.current_user.uid)
-      setIsLogued(true)
-      if(loged) {
-        return <MyTabs/>
-      } else { 
-
-        return response.status
-      }
+      setIsAuthenticated(true);
+      setToken(response.data.csrf_token)
+      await AsyncStorage.setItem("@UID", response.data.current_user.uid)
+      await AsyncStorage.setItem("@TOKEN", response.data.csrf_token)
+      await AsyncStorage.setItem("@TOKEN_LOGOUT", response.data.logout_token)
+      return response.status
     })
     .catch(function (error) {
-      console.log(error, "error de logueo")
+      if (error.response) {
+        // La respuesta fue hecha y el servidor respondió con un código de estado
+        // que esta fuera del rango de 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // La petición fue hecha pero no se recibió respuesta
+        // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
+        // http.ClientRequest en node.js
+        console.log(error.request);
+      } else {
+        // Algo paso al preparar la petición que lanzo un Error
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
     });
     
   }
   
-  const currentUid = async (uid) => {
-    await AsyncStorage.setItem("@UID", uid)
-  }
 
+  const getCredentials = async () => {
+   let idUser =  await AsyncStorage.getItem("@UID")
+   getDataUser(idUser)
+   let token_logout =  await AsyncStorage.getItem("@TOKEN_LOGOUT")
+   setTokenLogout(token_logout)
+  }
+  
+  
+  const getDataUser = async (uid)=> {
+    console.log("getDatauser")
+    await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
+      headers: {
+        "Content-Type" : "application/json",
+      },
+    }).then(async(response) =>{     
+      await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
+      const value = await AsyncStorage.getItem('@name');
+      if(value !== null) {
+        setName(value)
+      }
+  
+    }).catch(err => {console.log(err, "error get user")})
+  }
+  
+
+  
   //Deslogueandote
   const logout = () => {
     return axios.get('https://abarrotes.msalazar.dev/user/logout', {
       headers: {
         "Content-Type": "application/json",
+        "X-XSRF-Token": tokenLogout
       }
     }).then(function(response){
       tokenDelete()
       userRemove()
       // photoRemove()
+      setIsAuthenticated(false);
       return response.status
-
+      
     }).catch(function(error){
       console.log(error)
     })
   }
-
-  const getToken = () => {
-     return axios.post('https://abarrotes.msalazar.dev/session/token?_format=json', {
-      headers : {
-        "Content-Type" : "application/json",
-      },
-    }).then( async res=>{
-      console.log(res.data,"token actual")
-      setToken(res.data)
-      setTokenStorage(res.data)
-    }).catch(err=>{
-      console.log(err)
-    })
-  }
-
-  const setTokenStorage = async (tk) => {
-    await AsyncStorage.setItem("@TOKEN", tk)
-  }
-
+  
   const tokenDelete=async()=> {
     try {
       await AsyncStorage.removeItem("@TOKEN")
@@ -118,49 +136,30 @@ export const StateProvider = ({ children,navigation, MyTabs }) => {
     });  
   }
 
-  const currentUidStorage = async () => {
-   const idUser =  await AsyncStorage.getItem("@UID")
-   getDataUser(idUser)
-  }
-  
-  const getDataUser = async (uid)=> {
-    console.log(uid,"<<<")
-    await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
-      headers: {
-        "Content-Type" : "application/json",
-      },
-    }).then(async(response) =>{     
-      await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
-      const value = await AsyncStorage.getItem('@name');
-      if(value !== null) {
-        setName(value)
-      }
-  
-    }).catch(err => {console.log(err, "error get user")})
-  }
 
   useEffect(()=>{
-   getToken()
    getProveedores()
-   console.log(loged)
+   getCredentials()
   },[])
 
   return (
     <StateContext.Provider value={{
-     setToken,
+     //setToken,
      setUser,
      setpassword,
      login,
-     getToken,
      logout,
      getProveedores,
-     currentUidStorage,
+     getCredentials,
+     isAuthenticated,
      user,
      password,
      imagen,
      productos,
      name,
-     token
+     token,
+     tokenLogout
+     
      
     }}>
       {children}

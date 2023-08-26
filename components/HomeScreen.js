@@ -22,11 +22,19 @@ import { RenderProducts } from "./RenderProducts";
 
 
 function HomeScreen({ navigation }) {
-  const { productos, imagen, name,   currentUidStorage } = useMyContext();
+  const { productos, imagen, name, getCredentials, logout } = useMyContext();
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [index, setIndex] = useState("");
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState('left');
+  
+    const logoutBtn =  async () => {
+      const status = await logout()
+      if(status === 200) {
+        navigation.push("Login")
+      }
+    }
+    
 
 
   const IconMenu = (props) => (
@@ -44,25 +52,25 @@ function HomeScreen({ navigation }) {
       color="black"
       size={25}
       style={styles.iconMenu}
+      onPress={()=> {logoutBtn()}}
     />
   );
-
- 
+  
   const SearchIcon = (props) => (
     <Icon style={styles.icon} fill="#8F9BB3" name="search-outline" />
-  );
-
-  const openProducts = (index) => {
-    for (let i = 0; i < productos.length; i++) {
-      if (index === i) {
-        setSelectedCardIndex(index);
-        setIndex(index);
+    );
+    
+    const openProducts = (index) => {
+      for (let i = 0; i < productos.length; i++) {
+        if (index === i) {
+          setSelectedCardIndex(index);
+          setIndex(index);
+        }
       }
-    }
-  };
-
+    };
+    
   useEffect(() => {
-    currentUidStorage()
+   getCredentials()
   }, []);
 
   return (
