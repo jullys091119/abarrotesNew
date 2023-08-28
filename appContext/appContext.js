@@ -17,7 +17,7 @@ export const StateProvider = ({ children}) => {
  const [productos, setProductos] = useState({})
  const [name, setName] = useState("")
  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+ const [products, setProducts] = useState(null);
 
   const login =  () => {
     console.log("login")
@@ -38,27 +38,11 @@ export const StateProvider = ({ children}) => {
       return response.status
     })
     .catch(function (error) {
-      if (error.response) {
-        // La respuesta fue hecha y el servidor respondió con un código de estado
-        // que esta fuera del rango de 2xx
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // La petición fue hecha pero no se recibió respuesta
-        // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
-        // http.ClientRequest en node.js
-        console.log(error.request);
-      } else {
-        // Algo paso al preparar la petición que lanzo un Error
-        console.log('Error', error.message);
-      }
-      console.log(error.config);
+      console.log(error)
     });
     
   }
   
-
   const getCredentials = async () => {
    let idUser =  await AsyncStorage.getItem("@UID")
    getDataUser(idUser)
@@ -66,7 +50,7 @@ export const StateProvider = ({ children}) => {
    setTokenLogout(token_logout)
   }
   
-  
+
   const getDataUser = async (uid)=> {
     console.log("getDatauser")
     await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
@@ -83,7 +67,6 @@ export const StateProvider = ({ children}) => {
     }).catch(err => {console.log(err, "error get user")})
   }
   
-  //Deslogueandote
   const logout = () => {
     return axios.get('https://abarrotes.msalazar.dev/user/logout', {
       headers: {
@@ -117,7 +100,6 @@ export const StateProvider = ({ children}) => {
     }
   }
 
-
   const getProveedores = () => {
     axios.get('https://abarrotes.msalazar.dev/jsonapi/node/img_proveedores?include=field_img_proveedores', {
       headers: {
@@ -132,7 +114,7 @@ export const StateProvider = ({ children}) => {
       console.log(error);
     });  
   }
-
+  
 
   useEffect(()=>{
    getProveedores()
@@ -141,23 +123,22 @@ export const StateProvider = ({ children}) => {
 
   return (
     <StateContext.Provider value={{
-     //setToken,
      setUser,
      setpassword,
      login,
      logout,
      getProveedores,
      getCredentials,
+     setProducts,
      isAuthenticated,
      user,
      password,
      imagen,
      productos,
+     products,
      name,
      token,
      tokenLogout
-     
-     
     }}>
       {children}
     </StateContext.Provider>

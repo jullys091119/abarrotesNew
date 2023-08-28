@@ -22,21 +22,19 @@ import { RenderProducts } from "./RenderProducts";
 
 
 function HomeScreen({ navigation }) {
-  const { productos, imagen, name, getCredentials, logout } = useMyContext();
+  const { productos, imagen, name, getCredentials, logout, setProducts, products } = useMyContext();
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [index, setIndex] = useState("");
   const drawer = useRef(null);
+  const [currentProveedor,setCurrentProveedor] = useState("")
   const [drawerPosition, setDrawerPosition] = useState('left');
   
-    const logoutBtn =  async () => {
-      const status = await logout()
-      if(status === 200) {
-        navigation.push("Login")
-      }
+  const logoutBtn =  async () => {
+    const status = await logout()
+    if(status === 200) {
+      navigation.push("Login")
     }
-    
-
-
+  }
   const IconMenu = (props) => (
     <MaterialCommunityIcons
       name="cart-outline"
@@ -60,11 +58,12 @@ function HomeScreen({ navigation }) {
     <Icon style={styles.icon} fill="#8F9BB3" name="search-outline" />
     );
     
-    const openProducts = (index) => {
+    const openProducts = (index, proveedor) => {
       for (let i = 0; i < productos.length; i++) {
         if (index === i) {
           setSelectedCardIndex(index);
           setIndex(index);
+          setCurrentProveedor(proveedor)
         }
       }
     };
@@ -111,14 +110,14 @@ function HomeScreen({ navigation }) {
                     <Card
                       style={styles.card}
                       onPress={() => {
-                        openProducts(index + 1);
+                        openProducts(index + 1, item.attributes.field_nombre_proveedor);
                       }}
                     >
                       <Image
                         source={{
                           uri:
                             "https://abarrotes.msalazar.dev" +
-                            imagen.included[index].attributes.uri.url,
+                            imagen.included[index].attributes.uri.url
                         }}
                         style={{
                           width: 70,
@@ -135,7 +134,7 @@ function HomeScreen({ navigation }) {
           </View>
         </View>
         <View style={styles.boxCard}>
-          {selectedCardIndex === index && <RenderProducts />}
+          {currentProveedor && <RenderProducts proveedor={currentProveedor}/>}
         </View>
       </SafeAreaView>
     </>
