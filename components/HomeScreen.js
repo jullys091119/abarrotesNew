@@ -117,7 +117,7 @@ function HomeScreen({ navigation }) {
                         source={{
                           uri:
                             "https://abarrotes.msalazar.dev" +
-                            imagen.included[index].attributes.uri.url,
+                            imagen.included[index].attributes.uri.url
                         }}
                         style={{
                           width: 70,

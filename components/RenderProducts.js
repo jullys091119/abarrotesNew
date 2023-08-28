@@ -13,10 +13,11 @@ export const RenderProducts = (props) => {
   const {setProducts, product, getCredentials} = useMyContext()
   const [productos, setProductos] = useState({});
   const [imagen, setImagen] = useState({});
-  let productsRender = Object.values(productos, imagen);
-  let imagenRender = Object.values(imagen);
+  console.log(props.proveedor)
+  let inventoryBimbo = Object.values(productos);
 
   const getProducts = () => {
+    console.log("1")
     axios
       .get("https://abarrotes.msalazar.dev/jsonapi/node/productos?filter[field_proveedor]=" + props.proveedor + "&include=field_imagen", {
         headers: {
@@ -44,25 +45,26 @@ export const RenderProducts = (props) => {
     if (props.proveedor) {
       getProducts(); // Llamar a la función solo si props.proveedor está presente
     }
-  }, [props.proveedor]);// se verifica de entrada si esta variable es
+  }, [props.proveedor]);
 
   return (
     <FlatList
       style={styles.cardProduct}
       numColumns={2}
-      keyExtractor={(item, index) => index.toString()}
-      data={productsRender}
+      keyExtractor={(item) => item.id}
+      data={inventoryBimbo}
       renderItem={({ item, index }) => {
         return (
-          <Card style={styles.card} key={index}>
+          <Card style={styles.card}>
             <Text style={{ fontFamily: "Poppins", fontWeight: "600" }}>
               {item.attributes.field_nombre}
             </Text>
+            {imagen.included && imagen.included[index] && (
             <Image
               source={{
                 uri:
                   `https://abarrotes.msalazar.dev` +
-                  imagenRender[2][0].attributes.uri.url,
+                  imagen.included[index].attributes.uri.url,
               }}
               style={{
                 width: 90,
@@ -70,7 +72,7 @@ export const RenderProducts = (props) => {
                 borderRadius: 10,
                 marginVertical: 10,
               }}
-            />
+            />)}
             <View style={styles.IconShopCar}>
               <IconViewShop />
             </View>
