@@ -22,11 +22,7 @@ const Login = ({navigation}) => {
      }
     
   } 
-  
-  useEffect(()=> {
-
-  })
-  
+    
   return (
     <Layout style={styles.container}>
       <Layout>

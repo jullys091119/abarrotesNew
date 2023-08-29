@@ -59,12 +59,10 @@ function HomeScreen({ navigation }) {
     );
     
     const openProducts = (index, proveedor) => {
-      for (let i = 0; i < productos.length; i++) {
-        if (index === i) {
-          setSelectedCardIndex(index);
-          setIndex(index);
-          setCurrentProveedor(proveedor)
-        }
+      for (let i = 0; i <productos.length; i++) {
+        setSelectedCardIndex(index);
+        setIndex(index);
+        setCurrentProveedor(proveedor)
       }
     };
     
@@ -82,9 +80,9 @@ function HomeScreen({ navigation }) {
           </View>
           <View style={styles.welcomeUser}>
             <Text
-              style={{ fontFamily: "Bela", fontSize: 30, fontWeight: "100" }}
+              style={{ fontFamily: "Bela", fontSize: 30, fontWeight: "100", color: "#000" }}
             >
-              Hola, {name}
+              Hola, <Text>{name}</Text>
             </Text>
             <Text style={{ fontFamily: "BelaRegular", color: "gray" }}>
               Es hora de encontrar tu producto!
@@ -149,19 +147,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     height: 70,
-    marginTop: 40
+    marginTop: 40,
+    paddingRight: 10
   },
   iconMenu: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 5,
     
   },
   welcomeUser: {
     height: 90,
-    paddingHorizontal: 30,
+    paddingHorizontal: 10,
   },
   searchProduct: {
     height: 90,
-    marginHorizontal: 30,
+    marginHorizontal: 10,
     marginVertical: 0,
   },
   icon: {
@@ -172,7 +171,7 @@ const styles = StyleSheet.create({
     borderRadius: 13,
   },
   navBarBox: {
-    paddingHorizontal: 34,
+    paddingHorizontal: 10,
     marginTop: -30,
   },
   card: {

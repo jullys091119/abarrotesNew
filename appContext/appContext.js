@@ -29,7 +29,6 @@ export const StateProvider = ({ children}) => {
       },
     })
     .then(async function (response) {
-      console.log(response.data)
       setIsAuthenticated(true);
       setToken(response.data.csrf_token)
       await AsyncStorage.setItem("@UID", response.data.current_user.uid)
@@ -52,7 +51,6 @@ export const StateProvider = ({ children}) => {
   
 
   const getDataUser = async (uid)=> {
-    console.log("getDatauser")
     await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
       headers: {
         "Content-Type" : "application/json",
