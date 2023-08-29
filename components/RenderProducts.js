@@ -13,7 +13,6 @@ export const RenderProducts = (props) => {
   const {setProducts, product, getCredentials} = useMyContext()
   const [productos, setProductos] = useState({});
   const [imagen, setImagen] = useState({});
-  console.log(props.proveedor)
   let inventoryBimbo = Object.values(productos);
 
   const getProducts = () => {
@@ -67,14 +66,18 @@ export const RenderProducts = (props) => {
                   imagen.included[index].attributes.uri.url,
               }}
               style={{
-                width: 90,
-                height: 90,
+                width: 130,
+                height: 100,
                 borderRadius: 10,
                 marginVertical: 10,
               }}
+              resizeMode="contain"
             />)}
             <View style={styles.IconShopCar}>
               <IconViewShop />
+            </View>
+            <View style={{height:40, width: 110,transform: [{rotate: "30deg"}], backgroundColor:"red", position: "absolute", left: -40, bottom:-45}}>
+             
             </View>
           </Card>
         );
@@ -87,7 +90,7 @@ styles = StyleSheet.create({
   card: {
     backgroundColor: "white",
     width: 160,
-    height: 180,
+    height: 190,
     marginHorizontal: 10,
     marginVertical: 10,
     position: "relative",
@@ -97,7 +100,7 @@ styles = StyleSheet.create({
   },
 
   IconShopCar: {
-    backgroundColor: "#87cd79",
+    backgroundColor: "gold",
     position: "absolute",
     right: -20,
     bottom: -30,

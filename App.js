@@ -41,7 +41,15 @@ const Stack = createNativeStackNavigator();
 
 function MyTabs() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+    screenOptions={{
+      // tabBarActiveTintColor: '', // Color de la pestaña activa
+      // tabBarInactiveTintColor: 'red', // Color de la pestaña inactiva
+      tabBarStyle: {
+        backgroundColor: '#f5f5f5', // Color de fondo de la barra de navegación
+      },
+    }}
+    >
       <Tab.Screen
         name="Tiendita de la Esquina"
         component={HomeScreen}
@@ -96,8 +104,6 @@ function MyTabs() {
   );
 }
 
-
-
 function CustomDrawerContent({ navigation }) {
   return (
     <DrawerContentScrollView>
@@ -127,9 +133,6 @@ function MyDrawer() {
   );
 
 }
-
-
-
 
 export default function App() {
   console.log("app")
@@ -170,26 +173,7 @@ export default function App() {
               <Stack.Screen
                 name="Login"
                 component={Login}
-                options={({ navigation }) => ({
-                  title: "  Bienvenido",
-                  headerStyle: {
-                    backgroundColor: "red",
-                  },
-                  headerTintColor: "#fff",
-                  headerTitleStyle: {
-                    fontWeight: "bold",
-                  },
-                  headerLeft: () => (
-                    <Icon
-                      style={styles.icon}
-                      fill="#fff"
-                      name="arrow-back-outline"
-                      onPress={() => {
-                        navigation.navigate("MyTabs");
-                      }}
-                    />
-                  ),
-                })}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="HomeScreen"
