@@ -1,107 +1,146 @@
-import React, {useContext, useEffect, useState} from 'react'
-import { Text, StyleSheet, TouchableWithoutFeedback, View, TouchableOpacity, Linking} from 'react-native';
-import { Layout,  Icon, Input, Button} from '@ui-kitten/components';
+import React, { useState } from 'react';
+import { View, Image, Text, TextInput, TouchableOpacity, StyleSheet,TouchableWithoutFeedback } from 'react-native';
+import { Input,Icon } from '@ui-kitten/components';
 import axios from 'axios';
 import {useMyContext} from '../appContext/appContext';
 import HomeScreen from './HomeScreen';
-
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 
 const Login = ({navigation}) => {
 
-  const [secureTextEntry, setSecureTextEntry] = React.useState(true);
-
   const {login, user, password, setUser, setpassword, getCredentials} = useMyContext()
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
-  const loginBtn = async () => {
+  const handleLogin = async () => {
     let status = await login()
-     if (status == 200) {
-       navigation.navigate("MyTabs")
-       navigation.navigate("MyDrawer")
-       //etCredentials()
-     }
-    
-  } 
-    
-  return (
-    <Layout style={styles.container}>
-      <Layout>
-        <Layout style={{ marginVertical: 30}}>
-          <Text style={{textAlign: "center", color: "red", fontSize: 20, fontWeight: "600"}}>Inicia sesion</Text>
-        </Layout>
-        <Layout style={{marginTop: 0}}>
-        <Input
-            label="Usuario"
-            placeholder=' Ingresa tu usuario'
-            value={user}
-            onChangeText={user => setUser(user)}
-            style={styles.inputRadius}
-            size='large'  
-            placeholderTextColor='#FF3D71'
-            textStyle={{ fontSize: 11 }}
-          />
-          
-          <Input
-            value={password}
-            label='Contraseña'
-            size='large'  
-            placeholder='Ingresa tu contrasena'
-            secureTextEntry={secureTextEntry}
-            onChangeText={password => setpassword(password)}
-            style={[styles.inputRadius, styles.input]}
-            placeholderTextColor='#FF3D71'
-            textStyle={{ fontSize: 11 }}
-          />
-           
-          <Layout>
-            <TouchableWithoutFeedback >
-             <Text style={{textDecorationLine: "underline", textAlign: "center", paddingVertical: 20, color: "#FF3D71"}}>Olvidaste tu contrasena?</Text>
-            </TouchableWithoutFeedback>
-          </Layout>
-
-          <Layout>
-            <Button style={styles.button} size='large' onPress={()=>{loginBtn()}}>
-              Iniciar sesion
-            </Button>
-          </Layout>
-
-        </Layout>    
-      </Layout>
-    </Layout>
-  )
-}
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      paddingHorizontal: 20
-    },
-    
-    captionIcon: {
-      width: 10,
-      height: 10,
-      marginRight: 5
-    },
-    captionText: {
-      fontSize: 12,
-      fontWeight: "400",
-      color: "#8F9BB3",
-    },
-    inputRadius: {
-      borderRadius: 9,
-      marginVertical: 4,
-      backgroundColor: "#FFD6D9",
-      fontSize: 9
-    },
-    button: {
-      backgroundColor: "#FF0000",
-      width: 200,
-      alignSelf: "center",
-      borderColor: "transparent",
-      borderRadius: 13
+    if (status == 200) {
+      navigation.navigate("MyTabs")
+      navigation.navigate("MyDrawer")
+      //etCredentials()
     }
-});
+  };
+ 
+  const toggleSecureEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+
+  const renderIcon = () => (
+    <TouchableOpacity onPress={toggleSecureEntry} style={styles.icon}>
+     <MaterialCommunityIcons name={secureTextEntry ? 'eye-off' : 'eye'} size={24} color="gray" />
+    </TouchableOpacity>
+  )
+
+  const renderIconPerson = () => (
+    <Icon
+    style={styles.icon}
+    fill='#8F9BB3'
+    name='person-outline'
+    color="black"
   
+  />
+  )
 
-export default Login 
+  return (
+    <View style={styles.container}>
+      <View style={{marginTop:  130}}>
+      <Text style={styles.welcomeText}>Hola.</Text>
+        <Text style={styles.welcomeText}>Bienvenido</Text>
+      </View>
+      <View style={styles.formContainer}>
+    
+        <Input
+          value={user}
+          label="Usuario"
+          style={styles.input}
+          onChangeText={user => setUser(user)}
+          accessoryRight={renderIconPerson}
+        />
+        <Input
+          value={password}
+          style={styles.input}
+          label="Contraseña"
+          secureTextEntry={secureTextEntry}
+          value={password}
+          onChangeText={password => setpassword(password)}
+          accessoryRight={renderIcon}
+          onBlur={false}
+        />
+        <View style={styles.resetPassword}>
+        <TouchableWithoutFeedback >
+          <Text style={styles.resetText}>Olvidaste la Contraseña?</Text>
+        </TouchableWithoutFeedback>
+        </View>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Iniciar sesión</Text>
+        </TouchableOpacity>
+        <View style={styles.resetPassword}>
+          <Text style={styles.createAccount}>Crear Cuenta</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  formContainer: {
+    width: '80%',
+    alignSelf: "center",
+    marginVertical: 80
+  },
 
+  input: {
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0, borderBottomWidth: 1,
+    backgroundColor: "none",
+    borderColor: "gray",
+    marginVertical: 15,
+    borderRadius: 0
+  },
+  welcomeText: {
+    fontFamily: "BelaRegular",
+    fontSize: 40,
+    marginHorizontal: 30,
+    fontWeight: "900"
+  },
+  loginButton: {
+    backgroundColor: '#3498db',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginVertical: 70
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+  resetText: {
+    fontSize: 12,
+    textAlign: "right",
+    fontFamily: "BelaRegular",
+    lineHeight: 30,
+    fontWeight: "900"
+  },
+  createAccount: {
+    textAlign: "center",
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: "900",
+    marginTop: -30
+  },
+  label: {
+   backgroundColor: "green"
+  },
+  icon: {
+    width: 32,
+    height: 32,
+  },
+});
+
+export default Login;
