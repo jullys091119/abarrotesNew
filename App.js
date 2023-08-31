@@ -153,15 +153,15 @@ export default function App() {
             <NavigationContainer style={styles.container}>
               <Stack.Navigator>
                 <Stack.Screen
+                  name="Loading"
+                  component={Loading}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
                   name="MyDrawer"
                   component={MyDrawer}
                   options={{ headerShown: false }}
                 />
-                <Stack.Screen
-                  name="Loading"
-                  component={Loading}
-                  options={{ headerShown: false }}
-                  />
                 <Stack.Screen
                   name="MyTabs"
                   component={MyTabs}
@@ -198,7 +198,7 @@ export default function App() {
                   component={UserInfo}
                   options={{
                     headerShown:false,
-                    title: "UserInfo"
+                    title: "Registro"
                   }}
                 />
                 <Stack.Screen

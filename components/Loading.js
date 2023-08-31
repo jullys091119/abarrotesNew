@@ -24,9 +24,7 @@ export const Loading = ({navigation}) => {
       }, 3000);
       return () => clearTimeout(timer);
     }, []);
-
-  
-    
+ 
     return (
         <View style={styles.container}>
         {isLoading ? (
