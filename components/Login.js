@@ -9,7 +9,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 const Login = ({navigation}) => {
 
-  const {login, user, password, setUser, setpassword, getCredentials} = useMyContext()
+  const {login, user, password, setUser, setPassword, getCredentials} = useMyContext()
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const handleLogin = async () => {
@@ -41,6 +41,10 @@ const Login = ({navigation}) => {
   />
   )
 
+  const handleRegister =()=> {
+    navigation.replace("Register")
+  }
+
   return (
     <View style={styles.container}>
       <View style={{marginTop:  130}}>
@@ -62,7 +66,7 @@ const Login = ({navigation}) => {
           label="Contraseña"
           secureTextEntry={secureTextEntry}
           value={password}
-          onChangeText={password => setpassword(password)}
+          onChangeText={password => setPassword(password)}
           accessoryRight={renderIcon}
           onBlur={false}
         />
@@ -74,9 +78,9 @@ const Login = ({navigation}) => {
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>
-        <View style={styles.resetPassword}>
+        <TouchableWithoutFeedback style={styles.resetPassword} onPress={()=>{handleRegister()}}>
           <Text style={styles.createAccount}>Crear Cuenta</Text>
-        </View>
+        </TouchableWithoutFeedback>
       </View>
     </View>
   );
@@ -96,7 +100,8 @@ const styles = StyleSheet.create({
   input: {
     borderTopWidth: 0,
     borderLeftWidth: 0,
-    borderRightWidth: 0, borderBottomWidth: 1,
+    borderRightWidth: 0,
+    borderBottomWidth: 1,
     backgroundColor: "none",
     borderColor: "gray",
     marginVertical: 15,
