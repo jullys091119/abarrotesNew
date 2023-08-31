@@ -103,6 +103,7 @@ export const StateProvider = ({ children}) => {
   const userRemove= async()=> {
     try {
       await AsyncStorage.removeItem("@name")
+      await AsyncStorage.removeItem("@UID")
       console.log("user eliminado")
     } catch(error) {
       console.log(error, "error en el catech")
@@ -131,13 +132,13 @@ export const StateProvider = ({ children}) => {
       params: {_format: 'json'},
       headers: {'Content-Type': 'application/json'},
       data: {
-        name: [{ value: userRegister }],
-        pass: [{ value: passwordRegister }],  
-        mail: [{ value: emailRegister }],  
-        field_nombre_usuario: [{ value: nameRegister }], 
-        field_apellidos_usuario: [{ value: lastNameRegister }], 
-        field_direccion_usuario: [{ value: addressRegister }], 
-        field_telefono_usuario:  [{ value: phoneRegister }], 
+        name: [{ value:userRegister}],
+        pass: [{ value:passwordRegister}],  
+        mail: [{ value:emailRegister}],  
+        field_nombre_usuario: [{ value:nameRegister}], 
+        field_apellidos_usuario: [{value:lastNameRegister}], 
+        field_direccion_usuario: [{value:addressRegister}], 
+        field_telefono_usuario:  [{value:phoneRegister}], 
       }
      }
     axios.request(options).then((response)=>{
