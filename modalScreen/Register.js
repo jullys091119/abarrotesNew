@@ -1,161 +1,86 @@
 
 import React,{useState} from 'react'
-import { Text,View,TextInput, SafeAreaView, StyleSheet} from 'react-native'
+import { Text,View,TextInput, SafeAreaView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback} from 'react-native'
 import { Input, Layout, Button, Icon } from '@ui-kitten/components';
 import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Dialog, Portal } from 'react-native-paper';
 import axios from 'axios';
+import { useMyContext } from '../appContext/appContext';
+import { IconUser } from '../utils/helpers';
+import { IconPassword } from '../utils/helpers';
+import { IconBack } from '../utils/helpers';
+import { IconEmail } from '../utils/helpers';
+import { IconPhone } from '../utils/helpers';
+import { IconAddress } from '../utils/helpers';
+
 export const Register = ({navigation}) => {
-  const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [email, setEmail] = useState('');
-  const [password,setPassword] =  useState("")
-  const [user,setUser] =  useState("")
+  const [visible, setVisible] = useState(false);
+  const [msgError, setMsgError] = useState({})
+  const {userRegister, passwordRegister, setUserRegister, setPasswordRegister} = useMyContext()
 
-  const handleSave = () => {
-    const options = {
-      method: 'POST',
-      url: 'https://abarrotes.msalazar.dev/user/register?_format=json',
-      params: {_format: 'json'},
-      headers: {'Content-Type': 'application/json'},
-      data: {
-        name: [{ value: user }],
-        pass: [{ value: password }],  
-        mail: [{ value: email }],  
-        field_nombre_usuario: [{ value: name }], 
-        field_apellidos_usuario: [{ value: lastName }], 
-        field_direccion_usuario: [{ value: address }], 
-        field_telefono_usuario:  [{ value: phone }], 
-      }
-     }
-    axios.request(options).then((response)=>{
-      console.log(response)
-      alert("Usiario registrado")
-      navigation.replace("MyTabs")
-    }).catch((error)=>{
-      console.log(error)
-    })
-  };
 
-  const IconUser = () => {
-    return( 
-    <MaterialCommunityIcons name="account" color={"#FF0000"} size={25} />
-    )
-  }
-
-  const IconPassword = () => {
-    return( 
-    <MaterialCommunityIcons name="key" color={"#FF0000"} size={25} />
-    )
-  }
-
-  const IconEmail = () => {
-    return( 
-    <MaterialCommunityIcons name="email" color={"#FF0000"} size={25} />
-    )
-  }
-
-  const IconPhone = () => {
-    return( 
-    <MaterialCommunityIcons name="phone" color={"#FF0000"} size={25} />
-    )
+  const hideDialog = () => setVisible(false);
+  const showDialog= () => setVisible(true)
+  const DialogValidationRegister=(props)=> (
+    <Portal>
+      <Dialog visible={visible} onDismiss={hideDialog}>
+        <Dialog.Icon icon="alert"  color='red' size={40}/>
+        <Dialog.Title style={styles.title}>Error</Dialog.Title>
+        <Dialog.Content>
+          <Text variant="bodyMedium" style={styles.title}>{props.msgError}</Text>
+        </Dialog.Content>
+      </Dialog>
+    </Portal>
+  )
+  
+  const validate = () => {
+    const msgErrors = {
+      errorEmptyFields: "Complete todos los campos",
+      passwordUserWrong: "Usuario o llave incorrectos"
+    }
+    if([userRegister,passwordRegister].includes("")) {
+      setMsgError(msgErrors.errorEmptyFields)
+      showDialog()
+    } else  {
+      navigation.push("UserInfo")
+    }
   }
   
-  const IconAddress = () => {
-    return( 
-    <MaterialCommunityIcons name="map-marker-radius" color={"#FF0000"} size={25} />
-    )
-  }
+
+
   return (
     <View style={styles.container}>
-      <SafeAreaView>
-        <ScrollView>
-
-          <Layout style={styles.input}>
-            <Input
-              label="Usuario"
-              value={user}
-              onChangeText={setUser}
-              placeholder="Ingrese Usuario"
-              style={styles.inputRadius}
-              accessoryRight={(props) => <IconUser {...props} />}
-            />
-            </Layout>
-            
-          <Layout style={styles.input}>
-            <Input
-              label="Contrasena"
-              value={password} 
-              onChangeText={setPassword}
-              placeholder="Ingrese su contrasena"
-              textContentType='password'
-              style={styles.inputRadius}
-              accessoryRight={(props) => <IconPassword {...props} />  }
-            />
-          </Layout>
-
-          <Layout style={styles.input}>
-            <Input
-              label="Email :"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Ingrese su email"
-              style={styles.inputRadius}
-              accessoryRight={(props) => <IconEmail {...props} />}
-            />
-          </Layout>
-
-          <Text style={styles.datosPersonales}>Datos personales</Text>
-
-          <Layout style={styles.input}>
-            <Input
-              label="Nombre"
-              value={name}
-              onChangeText={setName}
-              placeholder="Ingrese su nombre"
-              style={styles.inputRadius}
-              accessoryRight={(props) => <IconUser {...props} />}
-            />
-          </Layout>
-        
-          <Layout style={styles.input}>
-            <Input
-              label="Apellidos"
-              value={lastName}
-              onChangeText={setLastName}
-              placeholder="Ingrese Apellidos"
-              style={styles.inputRadius}
-            />
-          </Layout>
-
-          <Layout style={styles.input}>
-            <Input
-              label="Direccion :"
-              value={address}
-              onChangeText={setAddress}
-              placeholder="Ingrese su direccion"
-              style={styles.inputRadius}
-              accessoryRight={(props)=> <IconAddress {...props}  />}
-            />
-            
-          </Layout>
-          
-          <Layout style={styles.input}>
-            <Input
-              label="Teléfono :"
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Ingrese su teléfono"
-              style={styles.inputRadius}
-              accessoryRight={(props)=> <IconPhone {...props}  />}
-            />
-          </Layout>
-
-          <Button style={styles.button}  onPress={handleSave}>Resgistrate</Button>
-        </ScrollView>
-      </SafeAreaView>
+      <ScrollView>
+        <View>
+          <IconBack/>
+        </View>
+        <View style={styles.createAccount}>
+          <Text style={styles.textNewAccount}>Crear Cuenta</Text>
+          <Text style={styles.textNewAccount, [styles.textStyles]} >Crear Cuenta Nueva</Text>
+        </View>
+        <View style={styles.formContainer}>
+          <Input
+            style={styles.input}
+            label="Nombre Usuario"
+            value={userRegister}
+            onChangeText={setUserRegister}
+            accessoryRight={(props) => <IconUser {...props} />}
+          />
+          <Input
+            label="Contrasena"
+            value={passwordRegister} 
+            style={styles.input}
+            onChangeText={setPasswordRegister}
+            textContentType='password'
+            accessoryRight={(props) => <IconPassword {...props} />  }
+          />
+        </View>
+        <TouchableOpacity style={styles.loginButton} onPress={validate}>
+          <Text style={styles.buttonText}>Siguiente</Text>
+        </TouchableOpacity>
+        <DialogValidationRegister msgError={msgError}/>
+      </ScrollView>
     </View>
   )
 }
@@ -166,29 +91,54 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
     justifyContent: "flex-start",
-    backgroundColor: "white",
-    paddingHorizontal: 30,
-    paddingVertical: 30
+    backgroundColor: "#f5f5f5",
+    paddingHorizontal: 15,
+    paddingVertical: 45
   },
- 
-  input: {
-    marginVertical: 15
+  createAccount: {
+    marginVertical: 60,
   },
-
-  button: {
-    backgroundColor: "#FF0000",
-    width: "100%",
+  textNewAccount: {
+    textAlign:"center",
+    fontSize: 40,
+    fontFamily: "BelaRegular"
+  },
+  textStyles: {
+    fontSize: 16,
+    textAlign: "center",
+    fontFamily: "BelaRegular"
+  },
+  formContainer: {
+    width: '80%',
     alignSelf: "center",
-    borderColor: "transparent",
-    borderRadius: 13,
-    marginVertical: 20
   },
-
-  datosPersonales: {
-    fontSize: 18,
-    fontWeight: "900",
-    marginVertical: 30,
-    color: "#FF0000"
+  input: {
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0, borderBottomWidth: 1,
+    backgroundColor: "none",
+    borderColor: "gray",
+    marginVertical: 15,
+    borderRadius: 0
   },
+  loginButton: {
+    backgroundColor: '#3498db',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginVertical: 50
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+  login: {
+    textAlign: "center",
+    fontFamily: "Bela"
+  },
+  title: {
+    textAlign: "center"
+  }
 
 })

@@ -9,15 +9,22 @@ export const useMyContext = () => useContext(StateContext);
 
 export const StateProvider = ({ children}) => {
  const [user, setUser] = useState('');
- const [password, setpassword] = useState('')
+ const [password, setPassword] = useState('')
  const [tokenLogout,setTokenLogout] = useState('')
  const [token, setToken] = useState("")
  const [uid, setUid] = useState()
  const [imagen, setImagen] = useState({})
- const [productos, setProductos] = useState({})
  const [name, setName] = useState("")
+ const [productos, setProductos] = useState({})
  const [isAuthenticated, setIsAuthenticated] = useState(false);
  const [products, setProducts] = useState(null);
+ const [nameRegister, setNameRegister] = useState("");
+ const [lastNameRegister, setLastNameRegister] = useState("");
+ const [phoneRegister, setPhoneRegister] = useState("");
+ const [addressRegister, setAddressRegister] = useState("");
+ const [emailRegister, setEmailRegister] = useState("");
+ const [passwordRegister,setPasswordRegister] =  useState("")
+ const [userRegister,setUserRegister] =  useState("")
 
   const login =  () => {
     console.log("login")
@@ -29,7 +36,6 @@ export const StateProvider = ({ children}) => {
       },
     })
     .then(async function (response) {
-      setIsAuthenticated(true);
       setToken(response.data.csrf_token)
       await AsyncStorage.setItem("@UID", response.data.current_user.uid)
       await AsyncStorage.setItem("@TOKEN", response.data.csrf_token)
@@ -51,6 +57,7 @@ export const StateProvider = ({ children}) => {
   
 
   const getDataUser = async (uid)=> {
+    console.log(uid)
     await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
       headers: {
         "Content-Type" : "application/json",
@@ -58,6 +65,7 @@ export const StateProvider = ({ children}) => {
     }).then(async(response) =>{     
       await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
       const value = await AsyncStorage.getItem('@name');
+      console.log(value, "value")
       if(value !== null) {
         setName(value)
       }
@@ -74,6 +82,9 @@ export const StateProvider = ({ children}) => {
     }).then(function(response){
       tokenDelete()
       userRemove()
+      setUser("")
+      setPassword("")
+
       return response.status
       
     }).catch(function(error){
@@ -112,6 +123,54 @@ export const StateProvider = ({ children}) => {
       console.log(error);
     });  
   }
+
+  const handleSave = () => {
+    const options = {
+      method: 'POST',
+      url: 'https://abarrotes.msalazar.dev/user/register?_format=json',
+      params: {_format: 'json'},
+      headers: {'Content-Type': 'application/json'},
+      data: {
+        name: [{ value: userRegister }],
+        pass: [{ value: passwordRegister }],  
+        mail: [{ value: emailRegister }],  
+        field_nombre_usuario: [{ value: nameRegister }], 
+        field_apellidos_usuario: [{ value: lastNameRegister }], 
+        field_direccion_usuario: [{ value: addressRegister }], 
+        field_telefono_usuario:  [{ value: phoneRegister }], 
+      }
+     }
+    axios.request(options).then((response)=>{
+     console.log(response.data)
+     setUserRegister("")
+     setNameRegister("")
+     setLastNameRegister("")
+     setEmailRegister("")
+     setPasswordRegister("")
+     setPhoneRegister("")
+     setAddressRegister("")
+     setUser("")
+     setPassword("")
+    }).catch((error)=>{
+      if (error.response) {
+        // La respuesta fue hecha y el servidor respondió con un código de estado
+        // que esta fuera del rango de 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // La petición fue hecha pero no se recibió respuesta
+        // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
+        // http.ClientRequest en node.js
+        console.log(error.request);
+      } else {
+        // Algo paso al preparar la petición que lanzo un Error
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
+    })
+  };
+
   
 
   useEffect(()=>{
@@ -122,12 +181,27 @@ export const StateProvider = ({ children}) => {
   return (
     <StateContext.Provider value={{
      setUser,
-     setpassword,
+     setPassword,
      login,
      logout,
      getProveedores,
      getCredentials,
      setProducts,
+     handleSave,
+     setUserRegister,
+     setPasswordRegister,
+     setEmailRegister,
+     setNameRegister,
+     setLastNameRegister,
+     setAddressRegister,
+     setPhoneRegister,
+     userRegister,
+     passwordRegister,
+     emailRegister,
+     nameRegister,
+     lastNameRegister,
+     addressRegister,
+     phoneRegister,
      isAuthenticated,
      user,
      password,

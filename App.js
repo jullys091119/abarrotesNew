@@ -13,6 +13,7 @@ import {
   Icon,
 } from "@ui-kitten/components";
 import 'react-native-gesture-handler';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { default as mapping } from "./mapping.json";
@@ -33,6 +34,7 @@ import { Title } from "react-native-paper";
 import { Context } from "./appContext/appContext";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import { logout } from "./utils/helpers";
+import UserInfo from "./modalScreen/UserInfo";
 
 
 const Tab = createBottomTabNavigator();
@@ -144,120 +146,116 @@ export default function App() {
   if (!fontLoaded) return null;
   return (
     <StateProvider>
-      <>
-        <IconRegistry icons={EvaIconsPack} />
-        <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
-          <NavigationContainer style={styles.container}>
-            <Stack.Navigator>
-              <Stack.Screen
-                name="MyDrawer"
-                component={MyDrawer}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="Loading"
-                component={Loading}
-                options={{ headerShown: false }}
+      <PaperProvider>
+        <>
+          <IconRegistry icons={EvaIconsPack} />
+          <ApplicationProvider {...eva} theme={eva.light} customMapping={mapping}>
+            <NavigationContainer style={styles.container}>
+              <Stack.Navigator>
+                <Stack.Screen
+                  name="MyDrawer"
+                  component={MyDrawer}
+                  options={{ headerShown: false }}
                 />
-              <Stack.Screen
-                name="MyTabs"
-                component={MyTabs}
-                options={{ headerShown: false }}
-              />
- 
-              <Stack.Screen
-                name="RenderProducts"
-                component={RenderProducts}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="Login"
-                component={Login}
-                options={{headerShown: false}}
-              />
-              <Stack.Screen
-                name="HomeScreen"
-                component={HomeScreen}
-                options={{ headerShown: false }}
-              />
+                <Stack.Screen
+                  name="Loading"
+                  component={Loading}
+                  options={{ headerShown: false }}
+                  />
+                <Stack.Screen
+                  name="MyTabs"
+                  component={MyTabs}
+                  options={{ headerShown: false }}
+                />
+  
+                <Stack.Screen
+                  name="RenderProducts"
+                  component={RenderProducts}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Login"
+                  component={Login}
+                  options={{headerShown: false}}
+                />
+                <Stack.Screen
+                  name="HomeScreen"
+                  component={HomeScreen}
+                  options={{ headerShown: false }}
+                />
 
-              <Stack.Screen
-                name="Register"
-                component={Register}
-                options={({ navigation }) => ({
-                  title: "Registro",
-                  headerStyle: {
-                    backgroundColor: "red",
-                  },
-                  headerTintColor: "#fff",
-                  headerTitleStyle: {
-                    fontWeight: "bold",
-                  },
-                  headerLeft: () => (
-                    <Icon
-                      style={styles.icon}
-                      fill="#fff"
-                      name="arrow-back-outline"
-                      onPress={() => {
-                        navigation.navigate("MyTabs");
-                      }}
-                    />
-                  ),
-                })}
-              />
-              <Stack.Screen
-                name="ModalBimbo"
-                component={ModalBimbo}
-                options={({ navigation }) => ({
-                  title: "Bimbo",
-                  headerStyle: {
-                    backgroundColor: "red",
-                  },
-                  headerTintColor: "#fff",
-                  headerTitleStyle: {
-                    fontWeight: "bold",
-                  },
-                  headerLeft: () => (
-                    <Icon
-                      style={styles.icon}
-                      fill="#fff"
-                      name="arrow-back-outline"
-                      onPress={() => {
-                        navigation.navigate("MyTabs");
-                      }}
-                    />
-                  ),
-                })}
-              />
-              <Stack.Screen
-                name="UpdateUser"
-                component={UpdateUser}
-                options={({ navigation }) => ({
-                  title: "Actualizar Datos",
-                  headerStyle: {
-                    backgroundColor: "red",
-                  },
-                  headerTintColor: "#fff",
-                  headerTitleStyle: {
-                    fontWeight: "bold",
-                  },
-                  headerLeft: () => (
-                    <Icon
-                      style={styles.icon}
-                      fill="#fff"
-                      name="arrow-back-outline"
-                      onPress={() => {
-                        navigation.navigate("MyTabs");
-                      }}
-                    />
-                  ),
-                })}
-              ></Stack.Screen>
-            </Stack.Navigator>
-            <StatusBar style="auto" />
-          </NavigationContainer>
-        </ApplicationProvider>
-      </>
+                <Stack.Screen
+                  name="Register"
+                  component={Register}
+                  options={{
+                    headerShown:false,
+                    title: "Registro"
+                  }}
+                />
+
+                <Stack.Screen
+                  name="UserInfo"
+                  component={UserInfo}
+                  options={{
+                    headerShown:false,
+                    title: "UserInfo"
+                  }}
+                />
+                <Stack.Screen
+                  name="ModalBimbo"
+                  component={ModalBimbo}
+                  options={({ navigation }) => ({
+                    title: "Bimbo",
+                    headerStyle: {
+                      backgroundColor: "red",
+                    },
+                    headerTintColor: "#fff",
+                    headerTitleStyle: {
+                      fontWeight: "bold",
+                    },
+                    headerLeft: () => (
+                      <Icon
+                        style={styles.icon}
+                        fill="#fff"
+                        name="arrow-back-outline"
+                        onPress={() => {
+                          navigation.navigate("MyTabs");
+                        }}
+                      />
+                    ),
+                  })}
+                />
+                <Stack.Screen
+                  name="UpdateUser"
+                  component={UpdateUser}
+                  options={({ navigation }) => ({
+                    title: "Actualizar Datos",
+                    headerStyle: {
+                      backgroundColor: "red",
+                    },
+                    headerTintColor: "#fff",
+                    headerTitleStyle: {
+                      fontWeight: "bold",
+                    },
+                    headerLeft: () => (
+                      <Icon
+                        style={styles.icon}
+                        fill="#fff"
+                        name="arrow-back-outline"
+                        onPress={() => {
+                          navigation.navigate("MyTabs");
+                        }}
+                      />
+                    ),
+                  })}
+                ></Stack.Screen>
+              </Stack.Navigator>
+              <StatusBar style="auto" />
+            </NavigationContainer>
+          </ApplicationProvider>
+        </>
+      </PaperProvider>
+     
     </StateProvider>
   );
 }
