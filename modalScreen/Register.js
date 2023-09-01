@@ -17,7 +17,7 @@ import { IconAddress } from '../utils/helpers';
 export const Register = ({navigation}) => {
   const [visible, setVisible] = useState(false);
   const [msgError, setMsgError] = useState({})
-  const {userRegister, passwordRegister, setUserRegister, setPasswordRegister} = useMyContext()
+  const {userRegister, passwordRegister, setUserRegister, setPasswordRegister, error} = useMyContext()
 
 
   const hideDialog = () => setVisible(false);
@@ -37,7 +37,7 @@ export const Register = ({navigation}) => {
   const validate = () => {
     const msgErrors = {
       errorEmptyFields: "Complete todos los campos",
-      passwordUserWrong: "Usuario o llave incorrectos"
+      passwordUserWrong: error
     }
     if([userRegister,passwordRegister].includes("")) {
       setMsgError(msgErrors.errorEmptyFields)

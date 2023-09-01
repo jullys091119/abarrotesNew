@@ -5,20 +5,30 @@ import axios from 'axios';
 import {useMyContext} from '../appContext/appContext';
 import HomeScreen from './HomeScreen';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
+import { Dialog, Portal } from "react-native-paper";
 
 const Login = ({navigation}) => {
-
   const {login, user, password, setUser, setPassword, getCredentials} = useMyContext()
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [visible, setVisible] = useState(false);
+  const [msgError, setMsgError] = useState({})
+  const [statusError, setStatusError] = useState("")
+
 
   const handleLogin = async () => {
     let status = await login()
+    setStatusError(status)
+    console.log(status, "status")
+    if(status !== 200) {
+      validate()
+    }
     if (status == 200) {
       navigation.navigate("MyTabs")
       navigation.navigate("MyDrawer")
       //etCredentials()
-    }
+    } 
+
+
   };
  
   const toggleSecureEntry = () => {
@@ -43,6 +53,49 @@ const Login = ({navigation}) => {
 
   const handleRegister =()=> {
     navigation.replace("Register")
+  }
+
+
+  const hideDialog = () => setVisible(false);
+  const showDialog= () => setVisible(true)
+  const DialogValidationRegister=(props)=> (
+    <Portal>
+      <Dialog visible={visible} onDismiss={hideDialog}>
+        <Dialog.Icon icon="alert"  color='red' size={40}/>
+        <Dialog.Title style={styles.title}>Error</Dialog.Title>
+        <Dialog.Content>
+          <Text variant="bodyMedium" style={styles.title}>{props.msgError}</Text>
+        </Dialog.Content>
+      </Dialog>
+    </Portal>
+  )
+
+  const validate = () => {
+    const msgErrors = {
+      errorEmptyFields: "Complete todos los campos",
+      blockedUser: "Usuario bloqueado temporalmente",
+      passwordIncorrect: "Credenciales incorrectas",
+      noInternet: "Problemas al conectar internet"
+    }
+    if([user,password].includes("")) {
+      setMsgError(msgErrors.errorEmptyFields)
+      showDialog()
+    }
+    if(statusError == 403) {
+      setMsgError(msgErrors.blockedUser)
+      showDialog()
+    }
+
+    if(statusError == 400) {
+      setMsgError(msgErrors.passwordIncorrect)
+      showDialog()
+    }
+
+    if(statusError == 500) {
+      setMsgError(msgErrors.noInternet)
+      showDialog()
+    }
+
   }
 
   return (
@@ -82,6 +135,7 @@ const Login = ({navigation}) => {
           <Text style={styles.createAccount}>Crear Cuenta</Text>
         </TouchableWithoutFeedback>
       </View>
+      <DialogValidationRegister msgError={msgError}/>
     </View>
   );
 };
@@ -146,6 +200,9 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
   },
+  title: {
+    textAlign: "center"
+  }
 });
 
 export default Login;
