@@ -25,6 +25,7 @@ export const StateProvider = ({ children}) => {
  const [emailRegister, setEmailRegister] = useState("");
  const [passwordRegister,setPasswordRegister] =  useState("")
  const [userRegister,setUserRegister] =  useState("")
+ const [error, setError] = useState("")
 
   const login =  () => {
     console.log("login")
@@ -43,7 +44,7 @@ export const StateProvider = ({ children}) => {
       return response.status
     })
     .catch(function (error) {
-      console.log(error)
+      return error.response.status
     });
     
   }
@@ -153,22 +154,7 @@ export const StateProvider = ({ children}) => {
      setUser("")
      setPassword("")
     }).catch((error)=>{
-      if (error.response) {
-        // La respuesta fue hecha y el servidor respondió con un código de estado
-        // que esta fuera del rango de 2xx
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // La petición fue hecha pero no se recibió respuesta
-        // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
-        // http.ClientRequest en node.js
-        console.log(error.request);
-      } else {
-        // Algo paso al preparar la petición que lanzo un Error
-        console.log('Error', error.message);
-      }
-      console.log(error.config);
+     console.log(error)
     })
   };
 
@@ -211,7 +197,8 @@ export const StateProvider = ({ children}) => {
      products,
      name,
      token,
-     tokenLogout
+     tokenLogout,
+     error
     }}>
       {children}
     </StateContext.Provider>
