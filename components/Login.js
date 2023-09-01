@@ -27,8 +27,6 @@ const Login = ({navigation}) => {
       navigation.navigate("MyDrawer")
       //etCredentials()
     } 
-
-
   };
  
   const toggleSecureEntry = () => {
@@ -47,7 +45,6 @@ const Login = ({navigation}) => {
     fill='#8F9BB3'
     name='person-outline'
     color="black"
-  
   />
   )
 
