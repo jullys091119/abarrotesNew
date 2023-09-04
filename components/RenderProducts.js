@@ -16,8 +16,8 @@ export const RenderProducts = (props) => {
   const [productos, setProductos] = useState({});
   const [imagen, setImagen] = useState({});
   const [idProduct, setIdProduct] = useState()
+  const [proveedor, setProveedor] = useState(props.proveedor)
   let inventoryBimbo = Object.values(productos);
-
   const getProducts = () => {
     axios
       .get(
@@ -119,7 +119,7 @@ export const RenderProducts = (props) => {
       />
       <ActionSheet ref={actionSheetRef}>
        <View  style={styles.containerSheet}>
-          <ShoppingProduct idProduct={idProduct}/>
+          <ShoppingProduct idProduct={idProduct}  CloseSheetModal={CloseSheetModal}/>
         </View>
       </ActionSheet>
     </>
@@ -129,7 +129,7 @@ export const RenderProducts = (props) => {
 styles = StyleSheet.create({
   card: {
     backgroundColor: "white",
-    width: 160,
+    minWidth: 160,
     height: 190,
     marginHorizontal: 10,
     marginVertical: 10,
