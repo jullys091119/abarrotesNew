@@ -31,3 +31,13 @@ export const IconAddress = () => {
     />
   );
 };
+
+export const IconStar = () => {
+  return (
+    <MaterialCommunityIcons
+      name="star"
+      color={"gold"}
+      size={25}
+    />
+  );
+};
