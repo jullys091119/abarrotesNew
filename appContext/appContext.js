@@ -26,6 +26,14 @@ export const StateProvider = ({ children}) => {
  const [passwordRegister,setPasswordRegister] =  useState("")
  const [userRegister,setUserRegister] =  useState("")
  const [error, setError] = useState("")
+ const [contador, setContador] = useState(0)
+ const [nombreProducto, setNombreProducto] = useState("")
+ const [nombreProveedor, setNombreProveedor] = useState("")
+ const [precio, setPrecio] = useState(0)
+ const [venta, setVenta] = useState(0)
+ const [counterSales, setCounterSales] = useState([])
+ const [addSales, setAddSales] = useState("")
+ const [updateSales, setUpdateSales] = useState('')
 
   const login =  () => {
     console.log("login")
@@ -174,7 +182,11 @@ export const StateProvider = ({ children}) => {
      console.log(error)
     })
   };
-
+  
+  const removeSale = async () => {
+    await AsyncStorage.removeItem("@VENTA")
+    await AsyncStorage.removeItem("@VENTAS")
+  }
   
 
   useEffect(()=>{
@@ -199,6 +211,17 @@ export const StateProvider = ({ children}) => {
      setLastNameRegister,
      setAddressRegister,
      setPhoneRegister,
+     setNombreProducto,
+     setNombreProveedor,
+     setPrecio,
+     setVenta,
+     setContador,
+     setCounterSales,
+     setAddSales,
+     removeSale,
+     setUpdateSales,
+     updateSales,
+     counterSales,
      userRegister,
      passwordRegister,
      emailRegister,
@@ -209,13 +232,16 @@ export const StateProvider = ({ children}) => {
      isAuthenticated,
      user,
      password,
+     precio,
      imagen,
      productos,
      products,
      name,
      token,
      tokenLogout,
-     error
+     error,
+     nombreProducto,
+     contador
     }}>
       {children}
     </StateContext.Provider>
