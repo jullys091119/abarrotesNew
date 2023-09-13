@@ -7,21 +7,38 @@ import { IconStar } from "../utils/helpers";
 import { AnimatedFAB } from 'react-native-paper';
 import { Badge } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { useNavigation } from "@react-navigation/native";
 
 
 const ShoppingProduct = (props, {visible,style,animateFrom}) => {
-  const { setProducts, product, getCredentials } = useMyContext();
+  const { 
+    setProducts,
+    product,
+    getCredentials,
+    setNombreProducto,
+    setNombreProveedor,
+    nombreProducto,
+    nombreProveedor,
+    setContador,
+    contador,
+    setCounterSales,
+    setUpdateSales,
+    precio,
+    setPrecio,
+    setAddSales
+  } = useMyContext();
+
+  
+
   const [productos, setProductos] = useState({});
   const [imagen, setImagen] = useState({});
-  const [contador, setContador] = useState(0)
-  const [nombreProducto, setNombreProducto] = useState("")
-  const [nombreProveedor, setNombreProveedor] = useState("")
-  const [precio, setPrecio] = useState(0)
-  const [venta, setVenta] = useState(0)
-  const [ventaStorage, setVentaStorage] = useState(0)
-
-   
+  const [addProductCar, setAddProductCar] = useState([])
+  const [venta, setVenta] = useState("")
+  const navigation = useNavigation()
+  const [ventas, setVentas] = useState([]);
+  const [idProduct, setIdProduct] = useState("")
+  const [isSalesExisted, setIsSaledExisted] = useState(true)
+  
   const getProducts = () => {
     axios
       .get(
@@ -37,6 +54,7 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
         }
       )
       .then(function (response) {
+        setIdProduct(props.idProduct)
         setPrecio(response.data.field_precio_venta[0].value)
         showTextNameProveedor(response.data.field_proveedor[0].value)
         setImagen(response.data.field_imagen[0].url);
@@ -61,9 +79,9 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
   };
  
   const setSale = async () => {  
-    console.log(venta, "newsales")
+    const nuevaVenta = venta + 1
     await AsyncStorage.setItem("@VENTA", JSON.stringify(venta + 1))
-    setVenta(venta + 1)
+    setVenta(nuevaVenta)  
   }
 
   const getSale = async () => {
@@ -73,21 +91,51 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
     } else {
       setVenta(0); // Establece un valor predeterminado si no hay ningún valor almacenado.
     }
-  
   }
-  
-  
-  const removeSale = async () => {
-     await AsyncStorage.removeItem("@VENTA")
-   }
-  
+
+  openShopCar = () => {
+    navigation.replace("ShoppingCar")
+  }
+
+  const addSales = async () => {
+    const nuevaVenta = {
+      id: idProduct,
+      nombreProducto,
+      precio: precio,
+      precioTotal: precio * contador,
+      ventas: venta + 1,
+      imagen: imagen.toString()
+    };
+    // Obtener las ventas existentes de AsyncStorage
+    const ventasExistentes = await AsyncStorage.getItem("@VENTAS");
+    let ventasActualizadas = [];
+
+
+    if (ventasExistentes !== null) {
+      ventasActualizadas = JSON.parse(ventasExistentes);
+    }
+    ventasActualizadas.push(nuevaVenta);
+
+
+    // Guardar las ventas actualizadas en AsyncStorage
+    await AsyncStorage.setItem("@VENTAS", JSON.stringify(ventasActualizadas));
+
+    // Actualizar el estado local
+    setCounterSales(ventasActualizadas);
+    alert("Se agregó el producto a la lista de ventas");
+
+  }
+
+ 
   const fabStyle = { [animateFrom]: 16 };
  
   useEffect(() => {
     getProducts()
-    //removeSale()
-  },[getSale()]);
-  
+    setContador(0)
+    getSale()
+  },[]);
+
+ 
   return (
     <View style={styles.container}>
       <View style={{display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
@@ -96,6 +144,7 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
           icon="cart-plus"
           iconColor="gold"
           size={30}
+          onPress={()=> {openShopCar()}}
         />
       </View>
       <View style={styles.header}>
@@ -151,7 +200,8 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
             color="white"
             // extended={isExtended}
             onPress={() =>{
-              setSale()
+            setSale()
+             addSales()
             }}
             visible={visible}
             animateFrom={'right'}

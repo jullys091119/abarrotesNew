@@ -35,6 +35,7 @@ import { Context } from "./appContext/appContext";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import { logout } from "./utils/helpers";
 import UserInfo from "./modalScreen/UserInfo";
+import ShoppingCar from "./modalScreen/ShoppingCar";
 
 
 const Tab = createBottomTabNavigator();
@@ -201,6 +202,16 @@ export default function App() {
                     title: "Registro"
                   }}
                 />
+
+                <Stack.Screen    
+                  name="ShoppingCar"
+                  component={ShoppingCar}
+                  options={{
+                    headerShown:false,
+                  
+                  }}
+                />
+
                 <Stack.Screen
                   name="ModalBimbo"
                   component={ModalBimbo}

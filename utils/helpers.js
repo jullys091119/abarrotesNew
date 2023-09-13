@@ -14,6 +14,12 @@ export const IconBack = () => {
   return <MaterialCommunityIcons name="arrow-left" color="gray" size={25} onPress={()=>navigation.navigate("Login")}/>;
 };
 
+export const IconBackShopingProduct = () => {
+  const navigation = useNavigation()
+  return <MaterialCommunityIcons name="arrow-left" color="gray" size={25} onPress={()=>navigation.navigate("HomeScreen")}/>;
+};
+
+
 export const IconEmail = () => {
   return <MaterialCommunityIcons name="email" color="gray" size={25} />;
 };
