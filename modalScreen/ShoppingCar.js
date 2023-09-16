@@ -9,16 +9,36 @@ import { IconBackShopingProduct } from "../utils/helpers";
 import { Divider } from "react-native-paper";
 import { IconButton } from "react-native-paper";
 
-const ShoppingCar = ({navigation}) => {
-  const {setCounterSales, removeSale, counterSales, setUpdateSales} = useMyContext();
+const ShoppingCar = ({ navigation }) => {
+  const { setCounterSales, removeSale, counterSales, setUpdateSales } =
+    useMyContext();
+  const [contador, setContador] = useState(0);
+  const [counterId, setCounterId] = useState();
+  const [precioTotal, setPrecioTotal] = useState({});
 
   const cancelSales = () => {
-    removeSale()
-    setCounterSales([])
-    if(removeSale) {
-      alert("elementos borrados")
+    removeSale();
+    setCounterSales([]);
+    if (removeSale) {
+      alert("elementos borrados");
     }
-  }
+  };
+
+  const updateCounter = (itemId, value, initialCount, price) => {
+    const updatedCount = (contador[itemId] || initialCount) + value;
+    const updatedTotal = updatedCount * price;
+
+    setContador((prevContador) => ({
+      ...prevContador,
+      [itemId]: updatedCount,
+    }));
+
+    // Aquí, actualizamos el precio total del producto en el estado si es necesario
+    setPrecioTotal((prevTotal) => ({
+      ...prevTotal,
+      [itemId]: updatedTotal,
+    }));
+  };
 
   useEffect(() => {
     const loadSales = async () => {
@@ -31,61 +51,85 @@ const ShoppingCar = ({navigation}) => {
         console.error("Error al cargar las ventas desde AsyncStorage", error);
       }
     };
-  
+
     loadSales();
   }, []);
-  
- 
+
   return (
     <View style={styles.container}>
       <IconBackShopingProduct />
-      <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 6}}>
-       <Text style={styles.title}>Mis Compras</Text>
-       <Text style={{marginTop: 20, fontSize: 16, fontWeight: "800"}}>{counterSales.length}{" "}Productos</Text>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingHorizontal: 6,
+        }}
+      >
+        <Text style={styles.title}>Mis Compras</Text>
+        <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "800" }}>
+          {counterSales.length} Productos
+        </Text>
       </View>
-      <Divider/>
+      <Divider />
       <FlatList
         data={counterSales}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => {
           return (
-            <View style={styles.cartItem}>
-              <Card style={styles.card}>
-                <Image
-                  source={{ uri: item.imagen }}
-                  style={{
-                    width: 50,
-                    height: 50,
-                    alignSelf: "center",
-                  }}
-                  resizeMode="contain"
-                />
-              </Card>
-              <View style={styles.productSales}>
-                <Text style={styles.nameProduct}>{item.nombreProducto}</Text>
-                <Text tyle={styles.priceProduct}>Total: ${item.precioTotal}</Text>
-                <View style={{display: "flex", flexDirection: "row"}}>
-                  <IconButton
-                    icon="plus"
-                    iconColor="white"
-                    size={10}
-                    onPress={() => {setContador(contador + 1)}}
-                    style={{backgroundColor: "red", borderRadius: 10}}
-                  />
-                  <IconButton
-                    icon="minus"
-                    iconColor="white"
-                    size={10}
-                    onPress={() => setContador(contador - 1)}
-                    style={{backgroundColor: "red", borderRadius: 10,}}
-                  />
+            <>
+              <Image
+                source={{ uri: item.imagen }}
+                style={{
+                  width: 90,
+                  height: 90,
+                  alignSelf: "center",
+                  position: "absolute",
+                  top: 25,
+                  left: 10,
+                  zIndex: 100
+                }}
+                resizeMode="contain"
+                
+              />
+
+              <View style={styles.cartItem}>
+                <Card style={styles.card}></Card>
+                <View style={styles.productSales}>
+                  <Text style={styles.nameProduct}>{item.nombreProducto}</Text>
+                  <Text style={styles.priceProduct}>
+                    Total: ${precioTotal[item.id] || item.precioTotal}
+                  </Text>
+                  <View style={{ display: "flex", flexDirection: "row" }}>
+                    <IconButton
+                      icon="minus"
+                      iconColor="white"
+                      size={10}
+                      onPress={() =>
+                        updateCounter(item.id, -1, item.contador, item.precio)
+                      }
+                      style={{ backgroundColor: "red", borderRadius: 10 }}
+                    />
+                    <Text style={{ marginTop: 9 }}>
+                      {contador[item.id] || item.contador}
+                    </Text>
+                    <IconButton
+                      icon="plus"
+                      iconColor="white"
+                      size={10}
+                      onPress={() =>
+                        updateCounter(item.id, 1, item.contador, item.precio)
+                      }
+                      style={{ backgroundColor: "red", borderRadius: 10 }}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
+            </>
           );
         }}
       />
-    
+
       <TouchableOpacity
         style={styles.loginButton}
         onPress={() => {
@@ -101,7 +145,7 @@ const ShoppingCar = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   paddingTop: 30
+    paddingTop: 30,
   },
   title: {
     fontFamily: "Bela",
@@ -113,43 +157,43 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   card: {
-    width: 80,
-    height: 70,
+    width: 70,
+    height: 65,
     backgroundColor: "#DFE2EA",
-    borderRadius: 14
+    borderRadius: 14,
+    position: "relative",
   },
   cartItem: {
     marginTop: 40,
     paddingHorizontal: 20,
     display: "flex",
     flexDirection: "row",
-    gap:  10,
-    justifyContent: "flex-start"
-  //   backgroundColor: "red"
+    gap: 10,
+    justifyContent: "flex-start",
+    //   backgroundColor: "red"
   },
   productSales: {
     width: "50%",
     paddingHorizontal: 20,
   },
   loginButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: "#3498db",
     padding: 15,
     borderRadius: 5,
-    alignItems: 'center',
-    marginVertical: 20
+    alignItems: "center",
+    marginVertical: 20,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   nameProduct: {
-    fontFamily: "Bela"
+    fontFamily: "Bela",
   },
   priceProduct: {
     fontFamily: "Bela",
-  }
-
+  },
 });
 
 export default ShoppingCar;
