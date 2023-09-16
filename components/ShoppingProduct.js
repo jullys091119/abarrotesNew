@@ -102,6 +102,7 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
       id: idProduct,
       nombreProducto,
       precio: precio,
+      contador: contador,
       precioTotal: precio * contador,
       ventas: venta + 1,
       imagen: imagen.toString()
@@ -109,20 +110,33 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
     // Obtener las ventas existentes de AsyncStorage
     const ventasExistentes = await AsyncStorage.getItem("@VENTAS");
     let ventasActualizadas = [];
-
-
+    
+    
     if (ventasExistentes !== null) {
       ventasActualizadas = JSON.parse(ventasExistentes);
     }
-    ventasActualizadas.push(nuevaVenta);
+    let isExist = false
 
+    for (const ventaActual of ventasActualizadas) {
+      if(ventaActual.id === nuevaVenta.id) {
+        isExist = true
+        break;
+      } 
+    }
 
-    // Guardar las ventas actualizadas en AsyncStorage
+    if(isExist) {
+      alert("No puedes agregar un producto que ya existe")
+      setVenta(venta)
+    }else {
+      ventasActualizadas.push(nuevaVenta)
+      alert("Se agregó el producto a la lista de ventas");
+    }
+ 
+
     await AsyncStorage.setItem("@VENTAS", JSON.stringify(ventasActualizadas));
-
+      
     // Actualizar el estado local
     setCounterSales(ventasActualizadas);
-    alert("Se agregó el producto a la lista de ventas");
 
   }
 
