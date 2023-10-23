@@ -8,6 +8,7 @@ import { AnimatedFAB } from 'react-native-paper';
 import { Badge } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import ShoppingCar from "../modalScreen/ShoppingCar";
 
 
 const ShoppingProduct = (props, {visible,style,animateFrom}) => {
@@ -25,15 +26,15 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
     setUpdateSales,
     precio,
     setPrecio,
-    setAddSales
+    setAddSales,
+    venta,
+    setVenta
   } = useMyContext();
 
-  
 
   const [productos, setProductos] = useState({});
   const [imagen, setImagen] = useState({});
   const [addProductCar, setAddProductCar] = useState([])
-  const [venta, setVenta] = useState("")
   const navigation = useNavigation()
   const [ventas, setVentas] = useState([]);
   const [idProduct, setIdProduct] = useState("")
@@ -79,9 +80,7 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
   };
  
   const setSale = async () => {  
-    const nuevaVenta = venta + 1
     await AsyncStorage.setItem("@VENTA", JSON.stringify(venta + 1))
-    setVenta(nuevaVenta)  
   }
 
   const getSale = async () => {
@@ -98,6 +97,7 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
   }
 
   const addSales = async () => {
+    setContador(0)
     const nuevaVenta = {
       id: idProduct,
       nombreProducto,
@@ -139,93 +139,93 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
     setCounterSales(ventasActualizadas);
 
   }
+ 
 
  
   const fabStyle = { [animateFrom]: 16 };
  
   useEffect(() => {
     getProducts()
-    setContador(0)
-    getSale()
-  },[]);
+  },[getSale()]);
 
  
   return (
-    <View style={styles.container}>
-      <View style={{display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
-        <Badge style={styles.badge}>{venta}</Badge>
-        <IconButton
-          icon="cart-plus"
-          iconColor="gold"
-          size={30}
-          onPress={()=> {openShopCar()}}
-        />
-      </View>
-      <View style={styles.header}>
-        <Image
-          source={{
-            uri:imagen.toString(),
-          }}
-          style={{
-            width: 200,
-            height: 200,
-            alignSelf: "center"
-          }}
-          resizeMode="contain"
-        />
-        <View style={styles.cantidad}>
+    <>
+      <View style={styles.container}>
+        <View style={{display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
+          <Badge style={styles.badge}>{venta==-1?0:venta}</Badge>
           <IconButton
-            icon="minus"
-            iconColor="white"
-            size={20}
-            onPress={() => setContador(contador - 1)}
-            style={{backgroundColor: "red", borderRadius: 10, marginHorizontal: 25}}
-          />
-          
-          {
-            Math.sign(contador) === -1?
-            (<Text style={styles.counter}>{setContador(0)}</Text>):(<Text style={styles.counter}>{contador}</Text>)
-          }
-         
-          <IconButton
-            icon="plus"
-            iconColor="white"
-            size={20}
-            onPress={() => {setContador(contador + 1)}}
-            style={{backgroundColor: "red", borderRadius: 10, marginHorizontal: 25}}
+            icon="cart-plus"
+            iconColor="gold"
+            size={30}
+            onPress={()=> {openShopCar()}}
           />
         </View>
-        <View style={styles.textInformationBox}>
-          <Text style={styles.nombreProveedor}>{nombreProveedor}</Text>
-          <View style={styles.precioBox}>
-           <Text style={styles.nombreProducto}>{nombreProducto}</Text>
-           <Text style={styles.precio}>${precio*contador}</Text>
-          </View>
-          <View style={{display: "flex", flexDirection: "row", marginTop: 10}}>
-            <IconStar/>
-            <IconStar/>
-            <IconStar/>
-            <IconStar/>
-            <IconStar/>
-          </View>
-          <AnimatedFAB
-            icon={'shopping-outline'}
-            label={'Label'}
-            color="white"
-            // extended={isExtended}
-            onPress={() =>{
-            setSale()
-             addSales()
+        <View style={styles.header}>
+          <Image
+            source={{
+              uri:imagen.toString(),
             }}
-            visible={visible}
-            animateFrom={'right'}
-            iconMode={'static'}
-            style={[styles.fabStyle, style, fabStyle]}
-         />
+            style={{
+              width: 200,
+              height: 200,
+              alignSelf: "center"
+            }}
+            resizeMode="contain"
+          />
+          <View style={styles.cantidad}>
+            <IconButton
+              icon="minus"
+              iconColor="white"
+              size={20}
+              onPress={() => setContador(contador - 1)}
+              style={{backgroundColor: "red", borderRadius: 10, marginHorizontal: 25}}
+            />
+            
+            {
+              Math.sign(contador) === -1?
+              (<Text style={styles.counter}>{setContador(0)}</Text>):(<Text style={styles.counter}>{contador}</Text>)
+            }
+          
+            <IconButton
+              icon="plus"
+              iconColor="white"
+              size={20}
+              onPress={() => {setContador(contador + 1)}}
+              style={{backgroundColor: "red", borderRadius: 10, marginHorizontal: 25}}
+            />
+          </View>
+          <View style={styles.textInformationBox}>
+            <Text style={styles.nombreProveedor}>{nombreProveedor}</Text>
+            <View style={styles.precioBox}>
+            <Text style={styles.nombreProducto}>{nombreProducto}</Text>
+            <Text style={styles.precio}>${precio*contador}</Text>
+            </View>
+            <View style={{display: "flex", flexDirection: "row", marginTop: 10}}>
+              <IconStar/>
+              <IconStar/>
+              <IconStar/>
+              <IconStar/>
+              <IconStar/>
+            </View>
+            <AnimatedFAB
+              icon={'shopping-outline'}
+              label={'Label'}
+              color="white"
+              // extended={isExtended}
+              onPress={() =>{
+              setSale()
+              addSales()
+              }}
+              visible={visible}
+              animateFrom={'right'}
+              iconMode={'static'}
+              style={[styles.fabStyle, style, fabStyle]}
+          />
+          </View>
         </View>
       </View>
-    </View>
-    
+    </>
   );
 };
 const styles = StyleSheet.create({

@@ -34,6 +34,8 @@ export const StateProvider = ({ children}) => {
  const [counterSales, setCounterSales] = useState([])
  const [addSales, setAddSales] = useState("")
  const [updateSales, setUpdateSales] = useState('')
+ const [counterHome, setCounterHome] = useState('')
+ 
 
   const login =  () => {
     console.log("login")
@@ -189,9 +191,20 @@ export const StateProvider = ({ children}) => {
   }
   
 
+  const counterHomeScreen = async () => {
+    try {
+      const counterHomeScreen =  await AsyncStorage.getItem("@VENTA")
+      setCounterHome(counterHomeScreen)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   useEffect(()=>{
    getProveedores()
    getCredentials()
+   counterHomeScreen()
   },[])
 
   return (
@@ -218,6 +231,7 @@ export const StateProvider = ({ children}) => {
      setContador,
      setCounterSales,
      setAddSales,
+     counterHomeScreen,
      removeSale,
      setUpdateSales,
      updateSales,
@@ -241,7 +255,9 @@ export const StateProvider = ({ children}) => {
      tokenLogout,
      error,
      nombreProducto,
-     contador
+     contador,
+     venta,
+     counterHome
     }}>
       {children}
     </StateContext.Provider>
