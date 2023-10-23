@@ -35,7 +35,8 @@ export const StateProvider = ({ children}) => {
  const [addSales, setAddSales] = useState("")
  const [updateSales, setUpdateSales] = useState('')
  const [counterHome, setCounterHome] = useState('')
- 
+ const [ischarged, setIsCharged] = useState(false)
+ const [email, setEmail] = useState("")
 
   const login =  () => {
     console.log("login")
@@ -85,23 +86,26 @@ export const StateProvider = ({ children}) => {
   
 
   const getDataUser = async (uid)=> {
-    console.log(uid)
     await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
       headers: {
         "Content-Type" : "application/json",
       },
     }).then(async(response) =>{     
+      console.log(response.data)
       await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
+      await AsyncStorage.setItem("@email", response.data.field_email_usuario[0].value) 
       const value = await AsyncStorage.getItem('@name');
-      console.log(value, "value")
+      const email = await AsyncStorage.getItem('@email');
       if(value !== null) {
         setName(value)
+        setEmail(email)
       }
   
     }).catch(err => {console.log(err, "error get user")})
   }
   
   const logout = () => {
+    alert("click")
     return axios.get('https://abarrotes.msalazar.dev/user/logout', {
       headers: {
         "Content-Type": "application/json",
@@ -170,7 +174,6 @@ export const StateProvider = ({ children}) => {
       }
      }
     axios.request(options).then((response)=>{
-     console.log(response.data)
      setUserRegister("")
      setNameRegister("")
      setLastNameRegister("")
@@ -205,6 +208,7 @@ export const StateProvider = ({ children}) => {
    getProveedores()
    getCredentials()
    counterHomeScreen()
+   setIsCharged(true)
   },[])
 
   return (
@@ -257,7 +261,9 @@ export const StateProvider = ({ children}) => {
      nombreProducto,
      contador,
      venta,
-     counterHome
+     counterHome,
+     ischarged,
+     email
     }}>
       {children}
     </StateContext.Provider>

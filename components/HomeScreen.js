@@ -30,12 +30,6 @@ function HomeScreen({ navigation }) {
   const [currentProveedor,setCurrentProveedor] = useState("")
   const [drawerPosition, setDrawerPosition] = useState('left');
   
-  const logoutBtn =  async () => {
-    const status = await logout()
-    if(status === 200) {
-      navigation.push("Login")
-    }
-  }
 
   const renderShoppingCar = () => {
     navigation.push("ShoppingCar")
@@ -51,15 +45,7 @@ function HomeScreen({ navigation }) {
     />
   );
 
-  const IconPower = (props) => (
-    <MaterialCommunityIcons
-      name="power"
-      color="red"
-      size={30}
-      style={styles.iconMenu}
-      onPress={()=> {logoutBtn()}}
-      />
-  );
+  
   
   const SearchIcon = (props) => (
     <Icon style={styles.icon} fill="#8F9BB3" name="search-outline" />
@@ -82,7 +68,7 @@ function HomeScreen({ navigation }) {
       <SafeAreaView style={styles.container}>
         <View>
           <View style={styles.header}>
-            <IconPower/>
+            {/* <IconPower/> */}
             <IconMenu />
             <Badge style={styles.badge}>{counterHome==null?0:counterHome}</Badge>
           </View>
