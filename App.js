@@ -36,7 +36,8 @@ import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigatio
 import { logout } from "./utils/helpers";
 import UserInfo from "./modalScreen/UserInfo";
 import ShoppingCar from "./modalScreen/ShoppingCar";
-
+import ShoppingProduct from "./components/ShoppingProduct";
+import { NativeBaseProvider, Box } from "native-base";
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -105,7 +106,10 @@ function MyTabs() {
       />
     </Tab.Navigator>
   );
+
+
 }
+
 
 function CustomDrawerContent({ navigation }) {
   return (
@@ -116,6 +120,9 @@ function CustomDrawerContent({ navigation }) {
       </TouchableOpacity>
     </DrawerContentScrollView>
   );
+  useEffect(()=>{
+  
+  },[MyTabs()])
 }
 
 function MyDrawer() {
@@ -147,6 +154,7 @@ export default function App() {
   if (!fontLoaded) return null;
   return (
     <StateProvider>
+      <NativeBaseProvider>
       <PaperProvider>
         <>
           <IconRegistry icons={EvaIconsPack} />
@@ -266,7 +274,7 @@ export default function App() {
           </ApplicationProvider>
         </>
       </PaperProvider>
-     
+      </NativeBaseProvider>
     </StateProvider>
   );
 }

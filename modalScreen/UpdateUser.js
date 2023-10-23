@@ -32,7 +32,6 @@ const UpdateUser = ({navigation}) => {
     }
   }
 
- 
   const handleSave = () => {
    const options = {
       method: 'PATCH',

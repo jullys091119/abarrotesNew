@@ -15,6 +15,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalBimbo from "../modalScreen/Bimbo";
+import { Badge } from "react-native-paper";
 
 //Context API
 import { useMyContext } from "../appContext/appContext";
@@ -22,7 +23,7 @@ import { RenderProducts } from "./RenderProducts";
 
 
 function HomeScreen({ navigation }) {
-  const { productos, imagen, name, getCredentials, logout, setProducts, products } = useMyContext();
+  const { productos, imagen, name, getCredentials, logout, setProducts, products, counterHome, counterHomeScreen} = useMyContext();
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [index, setIndex] = useState("");
   const drawer = useRef(null);
@@ -35,12 +36,18 @@ function HomeScreen({ navigation }) {
       navigation.push("Login")
     }
   }
+
+  const renderShoppingCar = () => {
+    navigation.push("ShoppingCar")
+  }
+
   const IconMenu = (props) => (
     <MaterialCommunityIcons
       name="cart-outline"
       color="black"
       size={25}
       style={styles.iconMenu}
+      onPress={()=>{renderShoppingCar()}}
     />
   );
 
@@ -68,7 +75,7 @@ function HomeScreen({ navigation }) {
     
   useEffect(() => {
    getCredentials()
-  }, []);
+  }, [counterHomeScreen()]);
 
   return (
     <>
@@ -76,7 +83,8 @@ function HomeScreen({ navigation }) {
         <View>
           <View style={styles.header}>
             <IconPower/>
-            <IconMenu/>
+            <IconMenu />
+            <Badge style={styles.badge}>{counterHome==null?0:counterHome}</Badge>
           </View>
           <View style={styles.welcomeUser}>
             <Text
@@ -188,6 +196,11 @@ const styles = StyleSheet.create({
     marginTop: 30,
     height: 300,
   },
+  badge: {
+    position: "absolute",
+    right: 8,
+    top: -12
+  }
 });
 
 export default HomeScreen;
