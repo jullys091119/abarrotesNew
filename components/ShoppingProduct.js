@@ -140,8 +140,6 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
 
   }
  
-
- 
   const fabStyle = { [animateFrom]: 16 };
  
   useEffect(() => {

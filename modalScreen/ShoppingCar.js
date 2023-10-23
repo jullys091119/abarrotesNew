@@ -10,7 +10,7 @@ import { IconBackShopingProduct } from "../utils/helpers";
 import { Box, FlatList, Pressable, HStack, Avatar, Icon} from "native-base";
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
-const ShoppingCar = ({ navigation }) => {
+const ShoppingCar = ({ navigation,myTabs }) => {
   const { setCounterSales, removeSale, counterSales, setUpdateSales, tokenLogout, setContador} = useMyContext();
   const [contadorActionSheet, setContadorActionSheet] = useState(0);
   const [precioTotal, setPrecioTotal] = useState({});

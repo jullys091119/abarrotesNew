@@ -5,6 +5,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React, { useEffect, useState } from "react";
 import * as eva from "@eva-design/eva";
+// import { Image } from "react-native-animatable";
 import {
   ApplicationProvider,
   Layout,
@@ -13,7 +14,7 @@ import {
   Icon,
 } from "@ui-kitten/components";
 import 'react-native-gesture-handler';
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { DefaultTheme, Divider, Provider as PaperProvider } from 'react-native-paper';
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { default as mapping } from "./mapping.json";
@@ -30,28 +31,29 @@ import { StateProvider, useMyContext } from "./appContext/appContext";
 import { useFonts } from "expo-font";
 import { Loading } from "./components/Loading";
 import { RenderProducts } from "./components/RenderProducts";
-import { Title } from "react-native-paper";
+import { Title, Avatar } from "react-native-paper";
 import { Context } from "./appContext/appContext";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
-import { logout } from "./utils/helpers";
+import { logout, IconPower } from "./utils/helpers";
 import UserInfo from "./modalScreen/UserInfo";
 import ShoppingCar from "./modalScreen/ShoppingCar";
 import ShoppingProduct from "./components/ShoppingProduct";
-import { NativeBaseProvider, Box } from "native-base";
+import { NativeBaseProvider, Box, Center } from "native-base";
+import { DataUser } from "./utils/helpers";
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
-function MyTabs() {
+const  MyTabs = () => {
   return (
     <Tab.Navigator
-    screenOptions={{
-      // tabBarActiveTintColor: '', // Color de la pestaña activa
-      // tabBarInactiveTintColor: 'red', // Color de la pestaña inactiva
-      tabBarStyle: {
-        backgroundColor: '#f5f5f5', // Color de fondo de la barra de navegación
-      },
+      screenOptions={{
+        // tabBarActiveTintColor: '', // Color de la pestaña activa
+        // tabBarInactiveTintColor: 'red', // Color de la pestaña inactiva
+        tabBarStyle: {
+          backgroundColor: '#f5f5f5', // Color de fondo de la barra de navegación
+        },
     }}
     >
       <Tab.Screen
@@ -107,35 +109,43 @@ function MyTabs() {
     </Tab.Navigator>
   );
 
-
 }
 
+const ImagePerfil = () => (
+  <>
+  <Avatar.Image size={150}  source={require('./assets/unnamed.jpg')} style={{alignSelf:"center", marginVertical: 40}}/>
+  </>
+);
 
 function CustomDrawerContent({ navigation }) {
   return (
     <DrawerContentScrollView>
       {/* Agregar contenido personalizado aquí */}
       <TouchableOpacity>
-        <Text>Cerrar sesion</Text>
+        <View style={{height: 190}}>
+          <ImagePerfil/>
+        </View>
+        <DataUser/>
+        <Divider/>
+        <View style={{height: 220}}>
+        </View>
+       
+      
+        <IconPower/>
+      
       </TouchableOpacity>
     </DrawerContentScrollView>
   );
-  useEffect(()=>{
-  
-  },[MyTabs()])
 }
 
 function MyDrawer() {
- 
   return (
-    <Drawer.Navigator  drawerContent={props => <CustomDrawerContent {...props} />}>
-    
+    <Drawer.Navigator  drawerContent={props => <CustomDrawerContent {...props}  initialRouteName="MyTabs" />}>
       <Drawer.Screen 
-        name="Inicio"
+        name="MyTabs"
         component={MyTabs}
         options={{
          headerShown: false,
-         
         }}
       /> 
 
@@ -162,13 +172,13 @@ export default function App() {
             <NavigationContainer style={styles.container}>
               <Stack.Navigator>
                 <Stack.Screen
-                  name="Loading"
-                  component={Loading}
+                  name="MyDrawer"
+                  component={MyDrawer}
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                  name="MyDrawer"
-                  component={MyDrawer}
+                  name="Loading"
+                  component={Loading}
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
