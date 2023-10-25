@@ -41,6 +41,7 @@ export const StateProvider = ({ children}) => {
  const [ischarged, setIsCharged] = useState(false)
  const [email, setEmail] = useState("")
 
+
   const login =  () => {
     console.log("login")
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
@@ -222,6 +223,7 @@ export const StateProvider = ({ children}) => {
       console.log(error)
     }
   }
+
   
 
   useEffect(()=>{
@@ -287,7 +289,7 @@ export const StateProvider = ({ children}) => {
      email,
      lastName,
      address,
-     phone
+     phone,
     }}>
       {children}
     </StateContext.Provider>
