@@ -7,6 +7,7 @@ import {Avatar} from "@ui-kitten/components";
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from "react";
 
 export const IconUser = () => {
   return <MaterialCommunityIcons name="account" color="gray" size={25} />;
@@ -149,8 +150,8 @@ fetch(url, options)
 
 
 export const ImagePerfil = () => {
+  const [imagen, setImagen] = useState("")
   const pickImage = async () => {
-    console.log("pickImage is called"); // Agrega este console.log
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -161,12 +162,13 @@ export const ImagePerfil = () => {
     if (!result.cancelled) {
       // La imagen seleccionada se encuentra en result.uri
       imageUpload(result.assets[0].uri)
+      setImagen(result.assets[0].uri)
     }
   };
   return (
     <TouchableWithoutFeedback onPress={pickImage}>
       <Avatar
-        source={require("../assets/unnamed.jpg")}
+        source={{ uri: imagen }}
         style={{
           alignSelf: "center",
           marginVertical: 40,
