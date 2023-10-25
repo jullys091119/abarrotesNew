@@ -1,3 +1,4 @@
+
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation} from "@react-navigation/native";
 import { useMyContext } from "../appContext/appContext";
@@ -5,6 +6,7 @@ import { View, Text } from "react-native-animatable";
 import {Avatar} from "@ui-kitten/components";
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const IconUser = () => {
   return <MaterialCommunityIcons name="account" color="gray" size={25} />;
@@ -122,6 +124,29 @@ const takePicture = async () => {
 };
 
 
+const imageUpload = async (data) => {
+  var tk = await AsyncStorage.getItem("@TOKEN")
+
+  const fetch = require('node-fetch');
+
+  let url = 'https://abarrotes.msalazar.dev/file/upload/user/user/user_picture?_format=json';
+
+let options = {
+  method: 'POST',
+  headers: {
+    'Content-Disposition': `file;filename="${data}"`,
+    'Content-Type': 'application/octet-stream',
+    'X-CSRF-Token':tk,
+    Authorization: 'Basic YXl0YW5hOnJvb3Q='
+  }
+};
+
+fetch(url, options)
+  .then(res => res.json())
+  .then(json => console.log(json))
+  .catch(err => console.error('error:' + err));
+}
+
 
 export const ImagePerfil = () => {
   const pickImage = async () => {
@@ -135,7 +160,7 @@ export const ImagePerfil = () => {
 
     if (!result.cancelled) {
       // La imagen seleccionada se encuentra en result.uri
-      console.log(result.assets[0].uri)
+      imageUpload(result.assets[0].uri)
     }
   };
   return (
