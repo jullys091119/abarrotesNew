@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   header: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     height: 70,
     marginTop: 40,
     paddingRight: 10

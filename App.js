@@ -31,7 +31,6 @@ import { StateProvider, useMyContext } from "./appContext/appContext";
 import { useFonts } from "expo-font";
 import { Loading } from "./components/Loading";
 import { RenderProducts } from "./components/RenderProducts";
-import { Title, Avatar } from "react-native-paper";
 import { Context } from "./appContext/appContext";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import { logout, IconPower } from "./utils/helpers";
@@ -39,7 +38,7 @@ import UserInfo from "./modalScreen/UserInfo";
 import ShoppingCar from "./modalScreen/ShoppingCar";
 import ShoppingProduct from "./components/ShoppingProduct";
 import { NativeBaseProvider, Box, Center } from "native-base";
-import { DataUser } from "./utils/helpers";
+import { EmailUser, NameUser, ImagePerfil} from "./utils/helpers";
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -111,32 +110,21 @@ const  MyTabs = () => {
 
 }
 
-const ImagePerfil = () => (
-  <>
-  <Avatar.Image size={150}  source={require('./assets/unnamed.jpg')} style={{alignSelf:"center", marginVertical: 40}}/>
-  </>
-);
 
 function CustomDrawerContent({ navigation }) {
   return (
     <DrawerContentScrollView>
       {/* Agregar contenido personalizado aquí */}
-      <TouchableOpacity>
-        <View style={{height: 190}}>
-          <ImagePerfil/>
-        </View>
-        <DataUser/>
+        <ImagePerfil/>
+        <EmailUser/>
         <Divider/>
-        <View style={{height: 220}}>
-        </View>
-       
-      
+        <NameUser/>
         <IconPower/>
-      
-      </TouchableOpacity>
     </DrawerContentScrollView>
   );
 }
+
+
 
 function MyDrawer() {
   return (
@@ -153,6 +141,7 @@ function MyDrawer() {
   );
 
 }
+
 
 export default function App() {
   console.log("app")
