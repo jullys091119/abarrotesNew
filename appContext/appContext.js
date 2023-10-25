@@ -15,6 +15,9 @@ export const StateProvider = ({ children}) => {
  const [uid, setUid] = useState()
  const [imagen, setImagen] = useState({})
  const [name, setName] = useState("")
+ const [lastName, setLastName] = useState("")
+ const [address, setAddress] = useState("")
+ const [phone,setPhone] = useState("")
  const [productos, setProductos] = useState({})
  const [isAuthenticated, setIsAuthenticated] = useState(false);
  const [products, setProducts] = useState(null);
@@ -86,6 +89,8 @@ export const StateProvider = ({ children}) => {
   
 
   const getDataUser = async (uid)=> {
+    console.log(uid, "id del user")
+
     await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
       headers: {
         "Content-Type" : "application/json",
@@ -93,25 +98,36 @@ export const StateProvider = ({ children}) => {
     }).then(async(response) =>{     
       console.log(response.data)
       await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
+      await AsyncStorage.setItem("@lastName", response.data.field_apellidos_usuario[0].value) 
       await AsyncStorage.setItem("@email", response.data.field_email_usuario[0].value) 
-      const value = await AsyncStorage.getItem('@name');
+      await AsyncStorage.setItem("@address", response.data.field_direccion_usuario[0].value) 
+      await AsyncStorage.setItem("@phoneNum", response.data.field_telefono_usuario[0].value) 
+      const name = await AsyncStorage.getItem('@name');
       const email = await AsyncStorage.getItem('@email');
-      if(value !== null) {
-        setName(value)
+      const lastName = await AsyncStorage.getItem('@lastName');
+      const address = await AsyncStorage.getItem("@address");
+      const phone = await AsyncStorage.getItem("@phoneNum");
+      console.log(name, email, lastName, address,  phone)
+
+      if(name || email || lastName || address || phone !== null) {
+        setName(name)
         setEmail(email)
+        setLastName(lastName)
+        setAddress(address)
+        setPhone(phone)
       }
   
     }).catch(err => {console.log(err, "error get user")})
   }
   
   const logout = () => {
-    alert("click")
     return axios.get('https://abarrotes.msalazar.dev/user/logout', {
       headers: {
         "Content-Type": "application/json",
         "X-XSRF-Token": tokenLogout
       }
     }).then(function(response){
+      console.log(response.data,"deslogueando")
       tokenDelete()
       userRemove()
       setUser("")
@@ -135,6 +151,10 @@ export const StateProvider = ({ children}) => {
   const userRemove= async()=> {
     try {
       await AsyncStorage.removeItem("@name")
+      await AsyncStorage.removeItem("@lastName")
+      await AsyncStorage.removeItem("@email")
+      await AsyncStorage.removeItem("@address")
+      await AsyncStorage.removeItem("@phoneNumber")
       await AsyncStorage.removeItem("@UID")
       console.log("user eliminado")
     } catch(error) {
@@ -202,13 +222,14 @@ export const StateProvider = ({ children}) => {
       console.log(error)
     }
   }
-
+  
 
   useEffect(()=>{
    getProveedores()
    getCredentials()
    counterHomeScreen()
-   setIsCharged(true)
+  setIsCharged(true)
+   //setPicturePhotoProfile()
   },[])
 
   return (
@@ -263,7 +284,10 @@ export const StateProvider = ({ children}) => {
      venta,
      counterHome,
      ischarged,
-     email
+     email,
+     lastName,
+     address,
+     phone
     }}>
       {children}
     </StateContext.Provider>
