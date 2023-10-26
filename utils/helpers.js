@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from "react";
+import * as FileSystem from 'expo-file-system';
 
 export const IconUser = () => {
   return <MaterialCommunityIcons name="account" color="gray" size={25} />;
@@ -119,38 +120,43 @@ const takePicture = async () => {
     aspect: [4, 3],
   });
   
-  if (!result.cancelled) {
+  if (!result.canceled) {
     // La imagen tomada se encuentra en result.uri
   }
 };
 
 
 const imageUpload = async (data) => {
-  var tk = await AsyncStorage.getItem("@TOKEN")
+  try {
+    const tk = await AsyncStorage.getItem("@TOKEN");
+    const fetch = require('node-fetch');
+    const url = 'https://abarrotes.msalazar.dev/file/upload/user/user/user_picture?_format=json';
+    
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Disposition': 'form-data; name="file"; filename="eta.jpg"',
+        'Content-Type': 'application/octet-stream',
+        'X-CSRF-Token': tk,
+        Authorization: 'Basic YXl0YW5hOnJvb3Q=',
+      },
+      body: data,
+    };
 
-  const fetch = require('node-fetch');
+    const response = await fetch(url, options);
+    const json = await response.json();
 
-  let url = 'https://abarrotes.msalazar.dev/file/upload/user/user/user_picture?_format=json';
-
-let options = {
-  method: 'POST',
-  headers: {
-    'Content-Disposition': `file;filename="${data}"`,
-    'Content-Type': 'application/octet-stream',
-    'X-CSRF-Token':tk,
-    Authorization: 'Basic YXl0YW5hOnJvb3Q='
+    console.log(json);
+  } catch (error) {
+    console.error('Error:', error);
   }
 };
-
-fetch(url, options)
-  .then(res => res.json())
-  .then(json => console.log(json))
-  .catch(err => console.error('error:' + err));
-}
 
 
 export const ImagePerfil = () => {
   const [imagen, setImagen] = useState("")
+
+
   const pickImage = async () => {
 
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -159,23 +165,39 @@ export const ImagePerfil = () => {
       aspect: [4, 3],
     });
 
-    if (!result.cancelled) {
-      // La imagen seleccionada se encuentra en result.uri
-      imageUpload(result.assets[0].uri)
-      setImagen(result.assets[0].uri)
+    if (!result.canceled) {
+      // Convierte la imagen a base64
+      const imageBase64 = await FileSystem.readAsStringAsync(result.assets[0].uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      
+      // Luego, puedes enviar la imageBase64 al servidor en lugar de result.assets[0].uri
+      imageUpload(imageBase64);
+      setImagen(result.assets[0].uri);
     }
   };
   return (
     <TouchableWithoutFeedback onPress={pickImage}>
+      {imagen?(
       <Avatar
-        source={{ uri: imagen }}
+        source={{ uri: imagen!==""?imagen:null }}
         style={{
           alignSelf: "center",
           marginVertical: 40,
-          width: 100,
-          height: 100,
+          width: 190,
+          height: 190,
         }}
-      />
+      />): 
+      <Avatar
+      source={{ uri: "./assets/avatar.jpg" }}
+        style={{
+          alignSelf: "center",
+          marginVertical: 40,
+          width: 190,
+          height: 190,
+        }}
+    />
+    }
     </TouchableWithoutFeedback>
   );
 };
