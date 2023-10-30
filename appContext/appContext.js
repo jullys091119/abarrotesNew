@@ -7,149 +7,147 @@ import axios from 'axios';
 
 export const useMyContext = () => useContext(StateContext);
 
-export const StateProvider = ({ children}) => {
- const [user, setUser] = useState('');
- const [password, setPassword] = useState('')
- const [tokenLogout,setTokenLogout] = useState('')
- const [token, setToken] = useState("")
- const [uid, setUid] = useState()
- const [imagen, setImagen] = useState({})
- const [name, setName] = useState("")
- const [lastName, setLastName] = useState("")
- const [address, setAddress] = useState("")
- const [phone,setPhone] = useState("")
- const [productos, setProductos] = useState({})
- const [isAuthenticated, setIsAuthenticated] = useState(false);
- const [products, setProducts] = useState(null);
- const [nameRegister, setNameRegister] = useState("");
- const [lastNameRegister, setLastNameRegister] = useState("");
- const [phoneRegister, setPhoneRegister] = useState("");
- const [addressRegister, setAddressRegister] = useState("");
- const [emailRegister, setEmailRegister] = useState("");
- const [passwordRegister,setPasswordRegister] =  useState("")
- const [userRegister,setUserRegister] =  useState("")
- const [error, setError] = useState("")
- const [contador, setContador] = useState(0)
- const [nombreProducto, setNombreProducto] = useState("")
- const [nombreProveedor, setNombreProveedor] = useState("")
- const [precio, setPrecio] = useState(0)
- const [venta, setVenta] = useState(0)
- const [counterSales, setCounterSales] = useState([])
- const [addSales, setAddSales] = useState("")
- const [updateSales, setUpdateSales] = useState('')
- const [counterHome, setCounterHome] = useState('')
- const [ischarged, setIsCharged] = useState(false)
- const [email, setEmail] = useState("")
+export const StateProvider = ({ children }) => {
+  const [user, setUser] = useState('');
+  const [password, setPassword] = useState('')
+  const [tokenLogout, setTokenLogout] = useState('')
+  const [token, setToken] = useState("")
+  const [uid, setUid] = useState()
+  const [imagen, setImagen] = useState({})
+  const [name, setName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [address, setAddress] = useState("")
+  const [phone, setPhone] = useState("")
+  const [productos, setProductos] = useState({})
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [products, setProducts] = useState(null);
+  const [nameRegister, setNameRegister] = useState("");
+  const [lastNameRegister, setLastNameRegister] = useState("");
+  const [phoneRegister, setPhoneRegister] = useState("");
+  const [addressRegister, setAddressRegister] = useState("");
+  const [emailRegister, setEmailRegister] = useState("");
+  const [passwordRegister, setPasswordRegister] = useState("")
+  const [userRegister, setUserRegister] = useState("")
+  const [error, setError] = useState("")
+  const [contador, setContador] = useState(0)
+  const [nombreProducto, setNombreProducto] = useState("")
+  const [nombreProveedor, setNombreProveedor] = useState("")
+  const [precio, setPrecio] = useState(0)
+  const [venta, setVenta] = useState(0)
+  const [counterSales, setCounterSales] = useState([])
+  const [addSales, setAddSales] = useState("")
+  const [updateSales, setUpdateSales] = useState('')
+  const [counterHome, setCounterHome] = useState('')
+  const [ischarged, setIsCharged] = useState(false)
+  const [email, setEmail] = useState("")
+  const [profile, setProfile] = useState("")
 
 
-  const login =  () => {
-    console.log("login")
+  const login = () => {
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
-    "name": user,
-    "pass": password,
-      headers : {
-        "Content-Type" : "application/json",
+      "name": user,
+      "pass": password,
+      headers: {
+        "Content-Type": "application/json",
       },
     })
-    .then(async function (response) {
-      setToken(response.data.csrf_token)
-      await AsyncStorage.setItem("@UID", response.data.current_user.uid)
-      await AsyncStorage.setItem("@TOKEN", response.data.csrf_token)
-      await AsyncStorage.setItem("@TOKEN_LOGOUT", response.data.logout_token)
-      return response.status
-    })
-    .catch(function (error) {
-      return error.response.status
-      if (error.response) {
-        // La respuesta fue hecha y el servidor respondió con un código de estado
-        // que esta fuera del rango de 2xx
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // La petición fue hecha pero no se recibió respuesta
-        // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
-        // http.ClientRequest en node.js
-        console.log(error.request);
-      } else {
-        // Algo paso al preparar la petición que lanzo un Error
-        console.log('Error', error.message);
-      }
-      console.log(error.config);
-  
-    });
-    
-  }
-  
-  const getCredentials = async () => {
-   let idUser =  await AsyncStorage.getItem("@UID")
-   getDataUser(idUser)
-   let token_logout =  await AsyncStorage.getItem("@TOKEN_LOGOUT")
-   setTokenLogout(token_logout)
-  }
-  
+      .then(async function (response) {
+        setToken(response.data.csrf_token)
+        await AsyncStorage.setItem("@UID", response.data.current_user.uid)
+        await AsyncStorage.setItem("@TOKEN", response.data.csrf_token)
+        await AsyncStorage.setItem("@TOKEN_LOGOUT", response.data.logout_token)
+        return response.status
+      })
+      .catch(function (error) {
+        return error.response.status
+        if (error.response) {
+          // La respuesta fue hecha y el servidor respondió con un código de estado
+          // que esta fuera del rango de 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // La petición fue hecha pero no se recibió respuesta
+          // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
+          // http.ClientRequest en node.js
+          console.log(error.request);
+        } else {
+          // Algo paso al preparar la petición que lanzo un Error
+          console.log('Error', error.message);
+        }
+        console.log(error.config);
 
-  const getDataUser = async (uid)=> {
-    console.log(uid, "id del user")
+      });
+
+  }
+
+  const getCredentials = async () => {
+    let idUser = await AsyncStorage.getItem("@UID")
+    setUid(idUser)
+    getDataUser(idUser)
+    let token_logout = await AsyncStorage.getItem("@TOKEN_LOGOUT")
+    setTokenLogout(token_logout)
+  }
+
+
+  const getDataUser = async (uid) => {
 
     await axios.get(`https://abarrotes.msalazar.dev/user/` + uid + `?_format=json`, {
       headers: {
-        "Content-Type" : "application/json",
+        "Content-Type": "application/json",
       },
-    }).then(async(response) =>{     
-      console.log(response.data)
-      await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value) 
-      await AsyncStorage.setItem("@lastName", response.data.field_apellidos_usuario[0].value) 
-      await AsyncStorage.setItem("@email", response.data.field_email_usuario[0].value) 
-      await AsyncStorage.setItem("@address", response.data.field_direccion_usuario[0].value) 
-      await AsyncStorage.setItem("@phoneNum", response.data.field_telefono_usuario[0].value) 
+    }).then(async (response) => {
+
+      await AsyncStorage.setItem("@name", response.data.field_nombre_usuario[0].value)
+      await AsyncStorage.setItem("@lastName", response.data.field_apellidos_usuario[0].value)
+      await AsyncStorage.setItem("@email", response.data.field_email_usuario[0].value)
+      await AsyncStorage.setItem("@address", response.data.field_direccion_usuario[0].value)
+      await AsyncStorage.setItem("@phoneNum", response.data.field_telefono_usuario[0].value)
       const name = await AsyncStorage.getItem('@name');
       const email = await AsyncStorage.getItem('@email');
       const lastName = await AsyncStorage.getItem('@lastName');
       const address = await AsyncStorage.getItem("@address");
       const phone = await AsyncStorage.getItem("@phoneNum");
-      console.log(name, email, lastName, address,  phone)
 
-      if(name || email || lastName || address || phone !== null) {
+      if (name || email || lastName || address || phone !== null) {
         setName(name)
         setEmail(email)
         setLastName(lastName)
         setAddress(address)
         setPhone(phone)
       }
-  
-    }).catch(err => {console.log(err, "error get user")})
+
+    }).catch(err => { console.log(err, "error get user") })
   }
-  
+
   const logout = () => {
     return axios.get('https://abarrotes.msalazar.dev/user/logout', {
       headers: {
         "Content-Type": "application/json",
         "X-XSRF-Token": tokenLogout
       }
-    }).then(function(response){
-      console.log(response.data,"deslogueando")
+    }).then(function (response) {
       tokenDelete()
       userRemove()
       setUser("")
       setPassword("")
 
       return response.status
-      
-    }).catch(function(error){
+
+    }).catch(function (error) {
       console.log(error)
     })
   }
-  
-  const tokenDelete=async()=> {
+
+  const tokenDelete = async () => {
     try {
       await AsyncStorage.removeItem("@TOKEN")
       console.log("borrando token")
     } catch (error) {
       console.log(error)
     }
-  } 
-  const userRemove= async()=> {
+  }
+  const userRemove = async () => {
     try {
       await AsyncStorage.removeItem("@name")
       await AsyncStorage.removeItem("@lastName")
@@ -157,8 +155,9 @@ export const StateProvider = ({ children}) => {
       await AsyncStorage.removeItem("@address")
       await AsyncStorage.removeItem("@phoneNumber")
       await AsyncStorage.removeItem("@UID")
+      await AsyncStorage.removeItem("@ID_PROFILE")
       console.log("user eliminado")
-    } catch(error) {
+    } catch (error) {
       console.log(error, "error en el catech")
     }
   }
@@ -169,55 +168,55 @@ export const StateProvider = ({ children}) => {
         'Content-Type': 'application/json'
       }
     })
-    .then(function (response) {
-      setImagen(response.data)
-      setProductos(response.data.data)
-    })
-    .catch(function (error) {
-      console.log(error);
-    });  
+      .then(function (response) {
+        setImagen(response.data)
+        setProductos(response.data.data)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   const handleSave = () => {
     const options = {
       method: 'POST',
       url: 'https://abarrotes.msalazar.dev/user/register?_format=json',
-      params: {_format: 'json'},
-      headers: {'Content-Type': 'application/json'},
+      params: { _format: 'json' },
+      headers: { 'Content-Type': 'application/json' },
       data: {
-        name: [{ value:userRegister}],
-        pass: [{ value:passwordRegister}],  
-        mail: [{ value:emailRegister}],  
-        field_nombre_usuario: [{ value:nameRegister}], 
-        field_apellidos_usuario: [{value:lastNameRegister}], 
-        field_direccion_usuario: [{value:addressRegister}], 
-        field_telefono_usuario:  [{value:phoneRegister}], 
+        name: [{ value: userRegister }],
+        pass: [{ value: passwordRegister }],
+        mail: [{ value: emailRegister }],
+        field_nombre_usuario: [{ value: nameRegister }],
+        field_apellidos_usuario: [{ value: lastNameRegister }],
+        field_direccion_usuario: [{ value: addressRegister }],
+        field_telefono_usuario: [{ value: phoneRegister }],
       }
-     }
-    axios.request(options).then((response)=>{
-     setUserRegister("")
-     setNameRegister("")
-     setLastNameRegister("")
-     setEmailRegister("")
-     setPasswordRegister("")
-     setPhoneRegister("")
-     setAddressRegister("")
-     setUser("")
-     setPassword("")
-    }).catch((error)=>{
-     console.log(error)
+    }
+    axios.request(options).then((response) => {
+      setUserRegister("")
+      setNameRegister("")
+      setLastNameRegister("")
+      setEmailRegister("")
+      setPasswordRegister("")
+      setPhoneRegister("")
+      setAddressRegister("")
+      setUser("")
+      setPassword("")
+    }).catch((error) => {
+      console.log(error)
     })
   };
-  
+
   const removeSale = async () => {
     await AsyncStorage.removeItem("@VENTA")
     await AsyncStorage.removeItem("@VENTAS")
   }
-  
+
 
   const counterHomeScreen = async () => {
     try {
-      const counterHomeScreen =  await AsyncStorage.getItem("@VENTA")
+      const counterHomeScreen = await AsyncStorage.getItem("@VENTA")
       setCounterHome(counterHomeScreen)
     } catch (error) {
       console.log(error)
@@ -226,70 +225,71 @@ export const StateProvider = ({ children}) => {
 
   
 
-  useEffect(()=>{
-   getProveedores()
-   getCredentials()
-   counterHomeScreen()
-  setIsCharged(true)
-   //setPicturePhotoProfile()
-  },[])
+  useEffect(() => {
+    getProveedores()
+    getCredentials()
+    counterHomeScreen()
+    setIsCharged(true)
+    //setPicturePhotoProfile()
+  }, [])
 
   return (
     <StateContext.Provider value={{
-     setUser,
-     setPassword,
-     login,
-     logout,
-     getProveedores,
-     getCredentials,
-     setProducts,
-     handleSave,
-     setUserRegister,
-     setPasswordRegister,
-     setEmailRegister,
-     setNameRegister,
-     setLastNameRegister,
-     setAddressRegister,
-     setPhoneRegister,
-     setNombreProducto,
-     setNombreProveedor,
-     setPrecio,
-     setVenta,
-     setContador,
-     setCounterSales,
-     setAddSales,
-     counterHomeScreen,
-     removeSale,
-     setUpdateSales,
-     updateSales,
-     counterSales,
-     userRegister,
-     passwordRegister,
-     emailRegister,
-     nameRegister,
-     lastNameRegister,
-     addressRegister,
-     phoneRegister,
-     isAuthenticated,
-     user,
-     password,
-     precio,
-     imagen,
-     productos,
-     products,
-     name,
-     token,
-     tokenLogout,
-     error,
-     nombreProducto,
-     contador,
-     venta,
-     counterHome,
-     ischarged,
-     email,
-     lastName,
-     address,
-     phone,
+      setUser,
+      setPassword,
+      login,
+      logout,
+      getProveedores,
+      getCredentials,
+      setProducts,
+      handleSave,
+      setUserRegister,
+      setPasswordRegister,
+      setEmailRegister,
+      setNameRegister,
+      setLastNameRegister,
+      setAddressRegister,
+      setPhoneRegister,
+      setNombreProducto,
+      setNombreProveedor,
+      setPrecio,
+      setVenta,
+      setContador,
+      setCounterSales,
+      setAddSales,
+      counterHomeScreen,
+      removeSale,
+      setUpdateSales,
+      updateSales,
+      counterSales,
+      userRegister,
+      passwordRegister,
+      emailRegister,
+      nameRegister,
+      lastNameRegister,
+      addressRegister,
+      phoneRegister,
+      isAuthenticated,
+      user,
+      password,
+      precio,
+      imagen,
+      productos,
+      products,
+      name,
+      token,
+      tokenLogout,
+      error,
+      nombreProducto,
+      contador,
+      venta,
+      counterHome,
+      ischarged,
+      email,
+      lastName,
+      address,
+      phone,
+      uid
     }}>
       {children}
     </StateContext.Provider>
