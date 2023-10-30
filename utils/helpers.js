@@ -9,6 +9,20 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from "react";
 import * as FileSystem from 'expo-file-system';
+import { decode, encode } from 'base-64';
+import { beginEvent } from "react-native/Libraries/Performance/Systrace";
+import { useEffect } from "react";
+import axios from "axios";
+
+
+// Configura el módulo base-64
+if (!global.btoa) {
+  global.btoa = encode;
+}
+if (!global.atob) {
+  global.atob = decode;
+}
+
 
 export const IconUser = () => {
   return <MaterialCommunityIcons name="account" color="gray" size={25} />;
@@ -114,90 +128,115 @@ export const IconPower =  () => {
    )
 }
 
-const takePicture = async () => {
-  const result = await ImagePicker.launchCameraAsync({
-    allowsEditing: true,
-    aspect: [4, 3],
-  });
+// const takePicture = async () => {
+//   const result = await ImagePicker.launchCameraAsync({
+//     allowsEditing: true,
+//     aspect: [4, 3],
+//   });
   
-  if (!result.canceled) {
-    // La imagen tomada se encuentra en result.uri
-  }
-};
+//   if (!result.canceled) {
+//     // La imagen tomada se encuentra en result.uri
+//   }
+// };
 
 
-const imageUpload = async (data) => {
-  try {
-    const tk = await AsyncStorage.getItem("@TOKEN");
-    const fetch = require('node-fetch');
-    const url = 'https://abarrotes.msalazar.dev/file/upload/user/user/user_picture?_format=json';
-    
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Disposition': 'form-data; name="file"; filename="eta.jpg"',
-        'Content-Type': 'application/octet-stream',
-        'X-CSRF-Token': tk,
-        Authorization: 'Basic YXl0YW5hOnJvb3Q=',
-      },
-      body: data,
-    };
 
-    const response = await fetch(url, options);
-    const json = await response.json();
-
-    console.log(json);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
 
 
 export const ImagePerfil = () => {
   const [imagen, setImagen] = useState("")
+  const [imagenStorage, setImagenStorage] = useState("")
+  const [url, setUrl] = useState("")
+  const {name} =  useMyContext()
+  
+  const imageUpload = async (base64Data, nameUser) => {
+    const tk = await AsyncStorage.getItem("@TOKEN");
+    const url = 'https://abarrotes.msalazar.dev/file/upload/node/perfil_usuario_picture/field_imagen_perfil?_format=json';
+    
+    // Convierte la imagen base64 en un ArrayBuffer
+    const binaryData = new Uint8Array(atob(base64Data).split('').map(char => char.charCodeAt(0)));
+  
+    // Crea un objeto FormData para enviar la imagen como un archivo binario
+    const formData = new FormData();
+    formData.append('file', {
+      uri: 'data:application/octet-stream;base64,' + base64Data,
+      type: 'application/octet-stream',
+      name:`raton.jpg`
+    });
+    
+    // Agrega el encabezado "Content-Disposition" con el nombre de archivo
+    formData.append('Content-Disposition', 'attachment; filename="33.jpg"');
+    // Agrega los encabezados necesarios
+    const headers = {
+      'Content-Type': 'application/octet-stream', // Cambiado a application/octet-stream
+      'X-XSRF-Token': tk,
+      'Authorization': 'Basic Og==',
+      'Content-Disposition':`file; filename="bebefiufiu.jpg"`
+    };
+  
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: binaryData, // Cambiado a binaryData
+      });
+  
+      const responseData = await response.json();
+      setPerfilProfileImages(responseData.uri[0].url)
+      loadProfileImageFromStorage()
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const setPerfilProfileImages=async(url)=> {
+    try {
+       await AsyncStorage.setItem("@PROFILE", url)
+    }catch (error) {
+      console.log(error)
+    }
+  }
+
+  const loadProfileImageFromStorage = async () => {
+    try {
+      const picture = await AsyncStorage.getItem('@PROFILE');
+      setImagen(picture);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  useEffect(()=> {
+    loadProfileImageFromStorage()
+  },[])
 
 
   const pickImage = async () => {
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
+      base64: true, 
     });
-
-    if (!result.canceled) {
-      // Convierte la imagen a base64
-      const imageBase64 = await FileSystem.readAsStringAsync(result.assets[0].uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      
+    if (!result.canceled) {      
       // Luego, puedes enviar la imageBase64 al servidor en lugar de result.assets[0].uri
-      imageUpload(imageBase64);
-      setImagen(result.assets[0].uri);
+      const base64ImageData = result.assets[0].base64
+      imageUpload(base64ImageData,  name);
     }
   };
+  
   return (
     <TouchableWithoutFeedback onPress={pickImage}>
-      {imagen?(
       <Avatar
-        source={{ uri: imagen!==""?imagen:null }}
-        style={{
-          alignSelf: "center",
-          marginVertical: 40,
-          width: 190,
-          height: 190,
-        }}
-      />): 
-      <Avatar
-      source={{ uri: "./assets/avatar.jpg" }}
-        style={{
-          alignSelf: "center",
-          marginVertical: 40,
-          width: 190,
-          height: 190,
-        }}
+      source={{ uri: `https://abarrotes.msalazar.dev` + imagen }}
+      style={{
+        alignSelf: "center",
+        marginVertical: 40,
+        width: 190,
+        height: 190,
+      }}
     />
-    }
+  
     </TouchableWithoutFeedback>
   );
 };
