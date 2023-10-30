@@ -141,13 +141,32 @@ export const IconPower =  () => {
 
 
 
-
-
 export const ImagePerfil = () => {
+  
   const [imagen, setImagen] = useState("")
   const [imagenStorage, setImagenStorage] = useState("")
   const [url, setUrl] = useState("")
-  const {name} =  useMyContext()
+  const {name,uid} =  useMyContext()
+
+  const getUser = async () => {
+    var axios = require("axios").default;
+    const id = await AsyncStorage.getItem("@UID")
+    var options  = {
+      method: 'GET',
+      url:'http://abarrotes.msalazar.dev/user/' + id,
+      params: { _format: 'json' },
+      headers: { 'Content-Type': 'application/json' }
+    };
+    axios.request(options).then(async function (response) {
+      if(id == response.data.uid[0].value ) {
+        alert("uid correcto")
+        loadProfileImageFromStorage()
+      }
+    }).catch(function (error) {
+      console.error(error, "error obtenie");
+    });
+   
+  }
   
   const imageUpload = async (base64Data, nameUser) => {
     const tk = await AsyncStorage.getItem("@TOKEN");
@@ -171,7 +190,7 @@ export const ImagePerfil = () => {
       'Content-Type': 'application/octet-stream', // Cambiado a application/octet-stream
       'X-XSRF-Token': tk,
       'Authorization': 'Basic Og==',
-      'Content-Disposition':`file; filename="bebefiufiu.jpg"`
+      'Content-Disposition':`file; filename="${name}.jpg"`
     };
   
     try {
@@ -207,7 +226,7 @@ export const ImagePerfil = () => {
   };
   
   useEffect(()=> {
-    loadProfileImageFromStorage()
+   getUser()
   },[])
 
 
