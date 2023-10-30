@@ -113,7 +113,7 @@ const  MyTabs = () => {
 
 function CustomDrawerContent({ navigation }) {
   return (
-    <DrawerContentScrollView>
+    <DrawerContentScrollView style={{backgroundColor: "#F7F9FC"}}>
       {/* Agregar contenido personalizado aquí */}
         <ImagePerfil/>
         <EmailUser/>
@@ -124,11 +124,9 @@ function CustomDrawerContent({ navigation }) {
   );
 }
 
-
-
 function MyDrawer() {
   return (
-    <Drawer.Navigator  drawerContent={props => <CustomDrawerContent {...props}  initialRouteName="MyTabs" />}>
+    <Drawer.Navigator  drawerContent={props => <CustomDrawerContent {...props}  initialRouteName="MyTabs" /> }>
       <Drawer.Screen 
         name="MyTabs"
         component={MyTabs}
@@ -136,7 +134,6 @@ function MyDrawer() {
          headerShown: false,
         }}
       /> 
-
     </Drawer.Navigator>
   );
 

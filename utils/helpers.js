@@ -14,7 +14,6 @@ import { beginEvent } from "react-native/Libraries/Performance/Systrace";
 import { useEffect } from "react";
 import axios from "axios";
 
-
 // Configura el módulo base-64
 if (!global.btoa) {
   global.btoa = encode;
@@ -71,6 +70,22 @@ export const IconStar = () => {
   );
 };
 
+export const IconCamera = () => {
+  return (
+    <MaterialCommunityIcons
+      name="camera"
+      color={"red"}
+      size={40}
+      style= {{
+        position: "absolute",
+        left: "40%",
+        top: "40%"
+      }}
+    />
+  );
+};
+
+
 export const EmailUser = () => {
   const {email} =  useMyContext()
   return (
@@ -82,9 +97,9 @@ export const NameUser = () => {
   const {name, lastName, address, phone} =  useMyContext()
   return (
     <>
-    <Text  style={{marginVertical: 10, marginHorizontal: 22, color: "gray" }}>{name}{" "}{lastName}</Text>
-    <Text style={{marginVertical: 10, marginHorizontal: 22, color: "gray"}} >{address}</Text>
-    <Text style={{marginVertical: 10, marginHorizontal: 22, color: "gray"}}  onPress={()=>{pickImage()}} >{phone}</Text>
+    <Text  style={{marginTop: 15, marginHorizontal: 22, color: "gray", fontSize: 23 }}><IconUser/>{" "}{name}{" "}{lastName}</Text>
+    <Text style={{marginVertical: 10, marginHorizontal: 52, color: "gray"}} >{address}</Text>
+    <Text style={{marginVertical: 10, marginHorizontal: 22, color: "gray"}}  onPress={()=>{pickImage()}} ><IconPhone/> {" "}{phone}</Text>
     </>
   )
 }
@@ -102,7 +117,7 @@ export const IconPower =  () => {
    return(
     <View 
      style={{
-      height: 90, 
+      height: 370, 
       display: "flex", 
       flexDirection: "row", 
       gap: 5,
@@ -127,6 +142,7 @@ export const IconPower =  () => {
     </View>
    )
 }
+
 
 // const takePicture = async () => {
 //   const result = await ImagePicker.launchCameraAsync({
@@ -159,7 +175,6 @@ export const ImagePerfil = () => {
     };
     axios.request(options).then(async function (response) {
       if(id == response.data.uid[0].value ) {
-        alert("uid correcto")
         loadProfileImageFromStorage()
       }
     }).catch(function (error) {
@@ -210,7 +225,8 @@ export const ImagePerfil = () => {
 
   const setPerfilProfileImages=async(url)=> {
     try {
-       await AsyncStorage.setItem("@PROFILE", url)
+      const key = `@PROFILE_${uid}`;
+      await AsyncStorage.setItem(key, url)
     }catch (error) {
       console.log(error)
     }
@@ -218,7 +234,9 @@ export const ImagePerfil = () => {
 
   const loadProfileImageFromStorage = async () => {
     try {
-      const picture = await AsyncStorage.getItem('@PROFILE');
+      // Cargar la foto de perfil desde AsyncStorage usando la clave única (UID)
+      const key = `@PROFILE_${uid}`;
+      const picture = await AsyncStorage.getItem(key);
       setImagen(picture);
     } catch (error) {
       console.log(error);
@@ -227,7 +245,7 @@ export const ImagePerfil = () => {
   
   useEffect(()=> {
    getUser()
-  },[])
+  },[imagen])
 
 
   const pickImage = async () => {
@@ -245,17 +263,22 @@ export const ImagePerfil = () => {
   };
   
   return (
-    <TouchableWithoutFeedback onPress={pickImage}>
+    <TouchableWithoutFeedback onPress={pickImage} style={{paddingVertical: 10}}>
       <Avatar
       source={{ uri: `https://abarrotes.msalazar.dev` + imagen }}
       style={{
         alignSelf: "center",
-        marginVertical: 40,
-        width: 190,
-        height: 190,
+        marginVertical:10,
+        width: 160,
+        height: 160,
+        borderWidth:10,
       }}
     />
-  
+    {
+      !imagen && (
+        <IconCamera/>
+      )
+    }
     </TouchableWithoutFeedback>
   );
 };
