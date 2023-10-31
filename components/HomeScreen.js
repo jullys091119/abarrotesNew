@@ -24,7 +24,7 @@ import { RenderProducts } from "./RenderProducts";
 
 function HomeScreen({ navigation }) {
   const { productos, imagen, name, getCredentials, logout, setProducts, products, counterHome, counterHomeScreen, miniPerfil} = useMyContext();
-  console.log(miniPerfil)
+  console.log(miniPerfil, "mini perful")
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [index, setIndex] = useState("");
   const drawer = useRef(null);

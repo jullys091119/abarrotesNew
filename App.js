@@ -39,7 +39,10 @@ import ShoppingCar from "./modalScreen/ShoppingCar";
 import ShoppingProduct from "./components/ShoppingProduct";
 import { NativeBaseProvider, Box, Center } from "native-base";
 import { EmailUser, NameUser, ImagePerfil} from "./utils/helpers";
-
+import MapView from 'react-native-maps';
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { getCurrentPositionAsync } from "expo-location";
+import * as Location from 'expo-location'
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -110,17 +113,60 @@ const  MyTabs = () => {
 
 }
 
+const SetMaps = () => {
+  const [location, setLocation] = useState(null);
+
+  const onRegionChange = (newRegion) => {
+    return newRegion;
+  }
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+  
+      let userLocation = await Location.getCurrentPositionAsync({});
+      setLocation(userLocation.coords); // Almacena toda la información de ubicación
+    })();
+  }, []);
+  
+   console.log(location)
+  return (
+    <>
+    {location ? (
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        }}
+      />
+    ) : (
+      <Text>Obteniendo ubicación...</Text>
+    )}
+  </>
+  );
+}
+
 
 function CustomDrawerContent({ navigation }) {
   return (
     <DrawerContentScrollView style={{backgroundColor: "#F7F9FC"}}>
-      {/* Agregar contenido personalizado aquí */}
-        <ImagePerfil/>
-        <EmailUser/>
-        <Divider/>
-        <NameUser/>
-        <IconPower/>
+      <ImagePerfil/>
+      <EmailUser/>
+      <Divider/>
+      <NameUser/>
+      <Layout style={{backgroundColor:"red", height: 310}}>
+        <SetMaps/>
+      </Layout>
+       <IconPower/>
     </DrawerContentScrollView>
+  
   );
 }
 
@@ -286,4 +332,8 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
   },
+  map: {
+    width: "100%",
+    height: "100%"
+  }
 });
