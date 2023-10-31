@@ -97,9 +97,9 @@ export const NameUser = () => {
   const {name, lastName, address, phone} =  useMyContext()
   return (
     <>
-    <Text  style={{marginTop: 15, marginHorizontal: 22, color: "gray", fontSize: 23 }}><IconUser/>{" "}{name}{" "}{lastName}</Text>
-    <Text style={{marginVertical: 10, marginHorizontal: 52, color: "gray"}} >{address}</Text>
-    <Text style={{marginVertical: 10, marginHorizontal: 22, color: "gray"}}  onPress={()=>{pickImage()}} ><IconPhone/> {" "}{phone}</Text>
+    <Text  style={{marginTop: 15, marginHorizontal: 22, color: "gray", fontSize: 19 }}><IconUser/>{" "}{name}{" "}{lastName}</Text>
+    <Text style={{marginVertical: 10, marginHorizontal: 52, color: "gray"}} >C.{address}</Text>
+    <Text style={{marginVertical: 0, marginHorizontal: 22, color: "gray"}}  onPress={()=>{pickImage()}} ><IconPhone/> {" "}{phone}</Text>
     </>
   )
 }
@@ -162,7 +162,7 @@ export const ImagePerfil = () => {
   const [imagen, setImagen] = useState("")
   const [imagenStorage, setImagenStorage] = useState("")
   const [url, setUrl] = useState("")
-  const {name,uid} =  useMyContext()
+  const {name,uid, setMiniPerfil} =  useMyContext()
 
   const getUser = async () => {
     var axios = require("axios").default;
@@ -238,6 +238,7 @@ export const ImagePerfil = () => {
       const key = `@PROFILE_${uid}`;
       const picture = await AsyncStorage.getItem(key);
       setImagen(picture);
+      setMiniPerfil(picture)
     } catch (error) {
       console.log(error);
     }

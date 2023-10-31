@@ -10,7 +10,7 @@ import {
   Button,
 } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { Card, Layout, Input, Icon } from "@ui-kitten/components";
+import { Card, Layout, Input, Icon, Avatar } from "@ui-kitten/components";
 import React, { useEffect, useState, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,14 +23,15 @@ import { RenderProducts } from "./RenderProducts";
 
 
 function HomeScreen({ navigation }) {
-  const { productos, imagen, name, getCredentials, logout, setProducts, products, counterHome, counterHomeScreen} = useMyContext();
+  const { productos, imagen, name, getCredentials, logout, setProducts, products, counterHome, counterHomeScreen, miniPerfil} = useMyContext();
+  console.log(miniPerfil)
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [index, setIndex] = useState("");
   const drawer = useRef(null);
   const [currentProveedor,setCurrentProveedor] = useState("")
   const [drawerPosition, setDrawerPosition] = useState('left');
   
-
+   console.log(miniPerfil)
   const renderShoppingCar = () => {
     navigation.push("ShoppingCar")
   }
@@ -44,9 +45,20 @@ function HomeScreen({ navigation }) {
       onPress={()=>{renderShoppingCar()}}
     />
   );
+  
+  const MiniImagePerfil = () => (
+    <Avatar
+      source={{ uri: `https://abarrotes.msalazar.dev` + miniPerfil }}
+      style={{
+        marginVertical:-10,
+        width: 50,
+        height: 50,
+        borderWidth:10,
+      }}
+  />
+  )
+  
 
-  
-  
   const SearchIcon = (props) => (
     <Icon style={styles.icon} fill="#8F9BB3" name="search-outline" />
     );
@@ -78,6 +90,9 @@ function HomeScreen({ navigation }) {
             >
               Hola, <Text>{name}</Text>
             </Text>
+            <View style={styles.miniPerfil}>
+             <MiniImagePerfil/>
+            </View>
             <Text style={{ fontFamily: "BelaRegular", color: "gray" }}>
               Es hora de encontrar tu producto!
             </Text>
@@ -186,6 +201,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 8,
     top: -12
+  }, 
+  ImagePerfil: {
+     height: 10
+  },
+  miniPerfil: {
+    alignSelf: "flex-end",
+    marginTop: -30
   }
 });
 

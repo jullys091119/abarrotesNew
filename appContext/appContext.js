@@ -41,7 +41,7 @@ export const StateProvider = ({ children }) => {
   const [ischarged, setIsCharged] = useState(false)
   const [email, setEmail] = useState("")
   const [profile, setProfile] = useState("")
-
+  const [miniPerfil, setMiniPerfil] = useState("")
 
   const login = () => {
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
@@ -257,6 +257,7 @@ export const StateProvider = ({ children }) => {
       setContador,
       setCounterSales,
       setAddSales,
+      setMiniPerfil,
       counterHomeScreen,
       removeSale,
       setUpdateSales,
@@ -289,7 +290,8 @@ export const StateProvider = ({ children }) => {
       lastName,
       address,
       phone,
-      uid
+      uid,
+      miniPerfil
     }}>
       {children}
     </StateContext.Provider>
