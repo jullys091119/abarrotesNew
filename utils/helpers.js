@@ -12,6 +12,7 @@ import * as FileSystem from 'expo-file-system';
 import { decode, encode } from 'base-64';
 import { beginEvent } from "react-native/Libraries/Performance/Systrace";
 import { useEffect } from "react";
+import * as Location from 'expo-location';
 import axios from "axios";
 
 // Configura el módulo base-64
@@ -97,9 +98,9 @@ export const NameUser = () => {
   const {name, lastName, address, phone} =  useMyContext()
   return (
     <>
-    <Text  style={{marginTop: 15, marginHorizontal: 22, color: "gray", fontSize: 19 }}><IconUser/>{" "}{name}{" "}{lastName}</Text>
-    <Text style={{marginVertical: 10, marginHorizontal: 52, color: "gray"}} >C.{address}</Text>
-    <Text style={{marginVertical: 0, marginHorizontal: 22, color: "gray"}}  onPress={()=>{pickImage()}} ><IconPhone/> {" "}{phone}</Text>
+    <Text  style={{marginTop: 15, marginHorizontal: 10, color: "gray", fontSize: 20 }}><IconUser/>{" "}{name}{" "}{lastName}</Text>
+    <Text style={{marginVertical: 10, marginHorizontal: 13, color: "gray"}} >{address}</Text>
+    <Text style={{marginBottom: 10, marginHorizontal: 10, color: "gray"}}  onPress={()=>{pickImage()}} ><IconPhone/> {" "}{phone}</Text>
     </>
   )
 }
@@ -117,12 +118,12 @@ export const IconPower =  () => {
    return(
     <View 
      style={{
-      height: 370, 
+      height: 100, 
       display: "flex", 
       flexDirection: "row", 
       gap: 5,
       alignItems: "center",
-      marginHorizontal: 20
+      marginHorizontal: 20,
       }}
       >
       <Text
