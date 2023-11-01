@@ -55,6 +55,7 @@ const Login = ({navigation}) => {
 
   const hideDialog = () => setVisible(false);
   const showDialog= () => setVisible(true)
+  
   const DialogValidationRegister=(props)=> (
     <Portal>
       <Dialog visible={visible} onDismiss={hideDialog}>
