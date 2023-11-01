@@ -43,6 +43,10 @@ import MapView from 'react-native-maps';
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getCurrentPositionAsync } from "expo-location";
 import * as Location from 'expo-location'
+
+
+
+
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -131,7 +135,7 @@ const SetMaps = () => {
       let userLocation = await Location.getCurrentPositionAsync({});
       setLocation(userLocation.coords); // Almacena toda la información de ubicación
     })();
-  }, []);
+  }, [location]);
   
    console.log(location)
   return (

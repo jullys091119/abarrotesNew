@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { Button, Dialog, Portal,Text } from 'react-native-paper';
+import React, { useEffect, useState, version } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Text, Card } from '@ui-kitten/components';
+import {  Card } from '@ui-kitten/components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMyContext } from '../appContext/appContext';
 import { Divider } from 'react-native-paper';
@@ -9,13 +10,17 @@ import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view'; // Impor
 import { IconBackShopingProduct } from "../utils/helpers";
 import { Box, FlatList, Pressable, HStack, Avatar, Icon} from "native-base";
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { Select, Center, CheckIcon, Input, Stack, Checkbox } from "native-base";
+
+
 
 const ShoppingCar = ({ navigation,myTabs }) => {
   const { setCounterSales, removeSale, counterSales, setUpdateSales, tokenLogout, setContador} = useMyContext();
   const [contadorActionSheet, setContadorActionSheet] = useState(0);
   const [precioTotal, setPrecioTotal] = useState({});
   const [totalVentas, setTotalVentas] = useState(0);
- 
+  const [visible, setVisible] = useState(false);
+  const hideDialog = () => setVisible(false);
   
 
   const cancelSales = () => {
@@ -25,7 +30,6 @@ const ShoppingCar = ({ navigation,myTabs }) => {
       alert('elementos borrados');
     }
   };
-
 
   const updateCounter = (itemId, value, initialCount, price) => {
     const updatedCount = (contadorActionSheet[itemId] || initialCount) + value;
@@ -149,13 +153,66 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     console.log('This row opened', rowKey);
   };
 
+  // const InputPay = () => {
+  //   const [value, setValue] = useState("")
+  //   return <Stack space={4} w="100%" maxW="300px" mx="auto">
+     
+  //   </Stack>;
+  // };
+  
+  // useEffect(()=> {
+  //   cancelSales()
+  // })
+  const SelectDenomination = ({denominacion}) => {
+    const [service, setService] = React.useState("complete");  
+    console.log(denominacion, "denominacion", "servicio", service)
+    return (
+      <Box maxW="300">
+        <Select selectedValue={service} minWidth="200" accessibilityLabel="Choose Service" placeholder="Selecciona  denominación" _selectedItem={{
+        bg: "teal.600",
+        endIcon: <CheckIcon size="5" />
+      }} mt={1} onValueChange={itemValue => setService(itemValue)}>
+       
+        <Select.Item label="$20.00" value="20"/>
+        <Select.Item label="$50.00" value="50" />
+        <Select.Item label="$100.00" value="100" />
+        <Select.Item label="$200.00" value="200" />
+        <Select.Item label="$500.00" value="500" />
+        <Select.Item label="Cambio completo" value="complete" />
+       </Select>
+        {
+         service !== "complete" && 
+        <Text variant="bodyMedium" style={{fontFamily: "Poppins", marginVertical: 30}}>Su Cambio sera de: ${service===""?0:service-denominacion}.00  </Text>
+        }
+      </Box>
+    )
+  };
+  
+  
+  const DialogDenomination = () => {
+    return (
+      <Portal>
+        <Dialog visible={visible} onDismiss={hideDialog}>
+        <Dialog.Content>
+          <Text variant="bodyMedium" style={{fontFamily: "Poppins"}}>¿La denominación del pago?</Text>
+          <SelectDenomination denominacion={totalVentas.toFixed(2)}/>
+        </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setVisible(!visible)}>Cancel</Button>
+            <Button onPress={() => console.log('Ok')}>Ok</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    );
+  };
+
   const renderItem = ({
     item,
     index
   }) => <Box>
       <Pressable onPress={() => console.log('You touched me')} alignItems="center" bg="white" borderBottomColor="trueGray.200" borderBottomWidth={1} justifyContent="center" height={50} underlayColor={'#AAA'} _pressed={{
       bg: 'trueGray.200'
-    }} py={8} style={{height:110, marginHorizontal: 5}}>
+    }} py={8} style={{height: "auto", marginHorizontal: 5}}>
         <HStack width="100%" px={4}>
           <HStack space={2} alignItems="center">       
             <Box style={styles.card}>
@@ -188,19 +245,19 @@ const ShoppingCar = ({ navigation,myTabs }) => {
         </HStack>
       </Pressable>
     </Box>;
-
     const renderHiddenItem = (data, rowMap) => <HStack flex={1} pl={2}>
     <Pressable px={4} ml="auto" cursor="pointer"  justifyContent="center" onPress={() =>  closeRow(rowMap, data.item.key)} _pressed={{
-    opacity: 0
+      opacity: 0
     }}>
       {/* <Icon as={<Ionicons name="close" />} color="white" /> */}
     </Pressable>
     <Pressable px={6} cursor="pointer" bg="red.500" justifyContent="center" onPress={() => handleDelete(data.item.id, rowMap)} _pressed={{
     opacity: 0.5
-    }}>
+  }}>
       <Icon as={<MaterialIcons name="delete" />} size={7}  color="white" />
     </Pressable >
     </HStack>;
+   
 
   return (
     <View style={styles.container}>
@@ -214,12 +271,10 @@ const ShoppingCar = ({ navigation,myTabs }) => {
         <SwipeListView data={counterSales} renderItem={renderItem} renderHiddenItem={renderHiddenItem} rightOpenValue={-130} previewRowKey={'0'} previewOpenValue={-40} previewOpenDelay={3000} onRowDidOpen={onRowDidOpen} />
       </Box>
       <Text style={styles.totalText}>Cantidad Total: ${totalVentas.toFixed(2)}</Text>
-      <TouchableOpacity style={styles.cancelButton}>
-        <Text style={styles.buttonText} onPress={() => cancelSales()}>Siguiente</Text>
-      </TouchableOpacity>
-      {/* <TouchableOpacity style={styles.buyButton} onPress={() => sendSales()}>
+      <TouchableOpacity style={styles.cancelButton} onPress={()=>setVisible(!visible)}>
         <Text style={styles.buttonText}>Comprar</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
+      <DialogDenomination/>
     </View>
   );
 };
@@ -314,6 +369,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  
+  visible: {
+    display: 'flex', // or you can use 'null' to not set a specific style property
+  },
+
+  hidden: {
+    display: 'none',
   },
 });
 
