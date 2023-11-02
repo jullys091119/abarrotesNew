@@ -50,7 +50,7 @@ export const RenderProducts = (props) => {
 
   const actionSheetRef = useRef();
   const actionSheetOpenProduct = (vidProduct) => {
-    console.log(vidProduct, "vidprodict")
+    // console.log(vidProduct, "vidprodict")
     setIdProduct(vidProduct)
     actionSheetRef.current?.show();
   };

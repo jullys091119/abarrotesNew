@@ -137,7 +137,7 @@ const SetMaps = () => {
     })();
   }, [location]);
   
-   console.log(location)
+  //  console.log(location)
   return (
     <>
     {location ? (

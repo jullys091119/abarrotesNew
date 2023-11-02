@@ -43,6 +43,8 @@ export const StateProvider = ({ children }) => {
   const [profile, setProfile] = useState("")
   const [miniPerfil, setMiniPerfil] = useState("")
 
+
+
   const login = () => {
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
       "name": user,
@@ -222,9 +224,58 @@ export const StateProvider = ({ children }) => {
       console.log(error)
     }
   }
-
   
+  
+  const sendSales = async (bool) => {
+    var axios = require("axios").default;
+    const tk =  await AsyncStorage.getItem("@TOKEN")
+    axios.defaults.headers.common['X-CSRF-Token'] = tk;
+    var options = {
+      method: 'POST',
+      url: 'https://abarrotes.msalazar.dev/jsonapi/node/Venta',
+      headers: {
+        'Content-Type': 'application/vnd.api+json',
+        Accept: 'application/vnd.api+json',
+        'X-XSRF-Token': token,
+        Authorization: 'Basic YWRtaW46cm9vdA=='
+      },
+      data: {
+        data: {
+          type: 'node--venta',
+          attributes: {
+            title: 'Venta',
+            field_cantidad_total_venta: '4',
+            field_nombre_producto_venta: 'Leche clavel',
+            field_total_venta: '26.00'
+          }
+        }
+      }
+    };
+    
+    axios.request(options).then(function (response) {
+      console.log(response.data);
+    }).catch(function (error) {
+      console.error(error);
+      if (error.response) {
+        // La respuesta fue hecha y el servidor respondió con un código de estado
+        // que esta fuera del rango de 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // La petición fue hecha pero no se recibió respuesta
+        // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
+        // http.ClientRequest en node.js
+        console.log(error.request);
+      } else {
+        // Algo paso al preparar la petición que lanzo un Error
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
+    });
 
+  }
+  
   useEffect(() => {
     getProveedores()
     getCredentials()
@@ -258,6 +309,7 @@ export const StateProvider = ({ children }) => {
       setCounterSales,
       setAddSales,
       setMiniPerfil,
+      sendSales,
       counterHomeScreen,
       removeSale,
       setUpdateSales,
@@ -291,7 +343,7 @@ export const StateProvider = ({ children }) => {
       address,
       phone,
       uid,
-      miniPerfil
+      miniPerfil,
     }}>
       {children}
     </StateContext.Provider>
