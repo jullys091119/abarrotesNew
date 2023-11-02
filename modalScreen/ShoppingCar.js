@@ -15,14 +15,15 @@ import { Select, Center, CheckIcon, Input, Stack, Checkbox } from "native-base";
 
 
 const ShoppingCar = ({ navigation,myTabs }) => {
-  const { setCounterSales, removeSale, counterSales, setUpdateSales, tokenLogout, setContador} = useMyContext();
+  const { setCounterSales, removeSale, counterSales, setUpdateSales, tokenLogout, setContador, sendSales} = useMyContext();
   const [contadorActionSheet, setContadorActionSheet] = useState(0);
   const [precioTotal, setPrecioTotal] = useState({});
   const [totalVentas, setTotalVentas] = useState(0);
+  const [isNoSend, setIsNoSend] = useState(true)
   const [visible, setVisible] = useState(false);
   const hideDialog = () => setVisible(false);
   
-
+  
   const cancelSales = () => {
     removeSale();
     setCounterSales([]);
@@ -65,7 +66,6 @@ const ShoppingCar = ({ navigation,myTabs }) => {
         if (ventasExistentes !== null) {
           setCounterSales(JSON.parse(ventasExistentes));
         }
-
         const contadorPrecioTotalData = await AsyncStorage.getItem('@ContadorPrecioTotal');
         if (contadorPrecioTotalData !== null) {
           const { contador, precioTotal } = JSON.parse(contadorPrecioTotalData);
@@ -130,6 +130,7 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     setTotalVentas(sumaTotal);
   }, [counterSales, precioTotal]);
 
+
   const [listData, setListData] = useState(Array(20).fill('').map((_, i) => ({
     key: `${i}`,
     text: `item #${i}`
@@ -153,19 +154,33 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     console.log('This row opened', rowKey);
   };
 
-  // const InputPay = () => {
-  //   const [value, setValue] = useState("")
-  //   return <Stack space={4} w="100%" maxW="300px" mx="auto">
-     
-  //   </Stack>;
-  // };
+  const MoneyRendering = ({service, activePay}) => {
+    const [money, setMoney] = useState("");
+    useEffect(() => {
+      const gaveMoney = service - activePay;
+      if (Math.sign(gaveMoney) === -1) {
+        setMoney(0);
+        setIsNoSend(()=> {
+          false;
+          console.error("Revisa tu denominacion")
+        })
+      } else {
+        setMoney(parseFloat(gaveMoney));
+        setIsNoSend(true)
+      }
+    }, [service, activePay]);
+    return(
+      <Text variant="bodyMedium" style={{fontFamily: "Poppins", marginVertical: 30}}>Su Cambio sera de: {money || 0}</Text> 
+    )
+  }
+
+  const sendingSales = () => {
+    sendSales()
+  }
+
   
-  // useEffect(()=> {
-  //   cancelSales()
-  // })
-  const SelectDenomination = ({denominacion}) => {
-    const [service, setService] = React.useState("complete");  
-    console.log(denominacion, "denominacion", "servicio", service)
+  const SelectDenomination = () => {
+    const [service, setService] = React.useState("complete");   
     return (
       <Box maxW="300">
         <Select selectedValue={service} minWidth="200" accessibilityLabel="Choose Service" placeholder="Selecciona  denominación" _selectedItem={{
@@ -180,14 +195,10 @@ const ShoppingCar = ({ navigation,myTabs }) => {
         <Select.Item label="$500.00" value="500" />
         <Select.Item label="Cambio completo" value="complete" />
        </Select>
-        {
-         service !== "complete" && 
-        <Text variant="bodyMedium" style={{fontFamily: "Poppins", marginVertical: 30}}>Su Cambio sera de: ${service===""?0:service-denominacion}.00  </Text>
-        }
+       <MoneyRendering service={service} activePay={totalVentas.toFixed(2)} />
       </Box>
     )
   };
-  
   
   const DialogDenomination = () => {
     return (
@@ -195,17 +206,17 @@ const ShoppingCar = ({ navigation,myTabs }) => {
         <Dialog visible={visible} onDismiss={hideDialog}>
         <Dialog.Content>
           <Text variant="bodyMedium" style={{fontFamily: "Poppins"}}>¿La denominación del pago?</Text>
-          <SelectDenomination denominacion={totalVentas.toFixed(2)}/>
+          <SelectDenomination/>
         </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setVisible(!visible)}>Cancel</Button>
-            <Button onPress={() => console.log('Ok')}>Ok</Button>
+            <Button onPress={() => console.log('Ok')} onPress={()=>{sendingSales()}}>Ok</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
     );
   };
-
+  
   const renderItem = ({
     item,
     index
@@ -249,17 +260,16 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     <Pressable px={4} ml="auto" cursor="pointer"  justifyContent="center" onPress={() =>  closeRow(rowMap, data.item.key)} _pressed={{
       opacity: 0
     }}>
-      {/* <Icon as={<Ionicons name="close" />} color="white" /> */}
     </Pressable>
     <Pressable px={6} cursor="pointer" bg="red.500" justifyContent="center" onPress={() => handleDelete(data.item.id, rowMap)} _pressed={{
-    opacity: 0.5
-  }}>
-      <Icon as={<MaterialIcons name="delete" />} size={7}  color="white" />
+     opacity: 0.5
+     }}>
+     <Icon as={<MaterialIcons name="delete" />} size={7}  color="white" />
     </Pressable >
     </HStack>;
    
 
-  return (
+   return (
     <View style={styles.container}>
       <IconBackShopingProduct />
       <View style={styles.header}>
@@ -325,7 +335,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   counterButton: {
-    backgroundColor: '#C5CEE0',
+    backgroundColor: 'red',
     borderRadius: 4,
     marginHorizontal: 5,
   },
