@@ -22,7 +22,9 @@ const ShoppingCar = ({ navigation,myTabs }) => {
   const [isNoSend, setIsNoSend] = useState(true)
   const [visible, setVisible] = useState(false);
   const hideDialog = () => setVisible(false);
-  
+  const [change, setChange] = useState("")
+  const [money, setMoney] = useState(0);
+  const [service, setService] = useState("complete"); 
   
   const cancelSales = () => {
     removeSale();
@@ -32,6 +34,72 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     }
   };
 
+  const sendingSales = (money) => {
+    const venta = {
+      items: counterSales, // La lista de elementos en el carrito
+      total: totalVentas.toFixed(2),
+      denominacion: service // El total de la venta
+      // Otros datos relevantes, como el cliente, la fecha, etc.
+    };
+    sendSales(venta.items,venta.total, venta.denominacion)
+    if(sendSales) {
+      navigation.push("MyTabs")
+      setVisible(!visible)
+    }
+  }
+  
+  const SelectDenomination = () => {
+    const [money, setMoney] = useState(0);
+
+    useEffect(() => {
+      const gaveMoney = service - totalVentas.toFixed(2);
+      if (Math.sign(gaveMoney) === -1) {
+        setMoney(0);
+        setIsNoSend(false);
+      } else {
+        setMoney(parseFloat(gaveMoney));
+        setIsNoSend(true);
+      }
+    }, [service, totalVentas]);
+  
+    return (
+      <Box maxW="300">
+        <Select selectedValue={service} minWidth="200" accessibilityLabel="Choose Service" placeholder="Selecciona  denominación" _selectedItem={{
+        bg: "teal.600",
+        endIcon: <CheckIcon size="5" />
+      }} mt={1} onValueChange={itemValue => setService(itemValue)}>
+       
+        <Select.Item label="$20.00" value="20"/>
+        <Select.Item label="$50.00" value="50" />
+        <Select.Item label="$100.00" value="100" />
+        <Select.Item label="$200.00" value="200" />
+        <Select.Item label="$500.00" value="500" />
+        <Select.Item label="Cambio completo" value="complete" />
+       </Select>
+       <Text variant="bodyMedium" style={{ fontFamily: "Poppins", marginVertical: 30 }}>
+        Su Cambio será de: {money || 0}
+       </Text>
+      </Box>
+    )
+  };
+  
+  const DialogDenomination = () => {
+    return (
+      <Portal>
+        <Dialog visible={visible} onDismiss={hideDialog}>
+        <Dialog.Content>
+          <Text variant="bodyMedium" style={{fontFamily: "Poppins"}}>¿La denominación del pago?</Text>
+          <SelectDenomination/>
+        </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setVisible(!visible)}>Cancel</Button>
+            <Button onPress={() => console.log('Ok')} onPress={()=>{sendingSales()}}>Ok</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    );
+  };
+  
   const updateCounter = (itemId, value, initialCount, price) => {
     const updatedCount = (contadorActionSheet[itemId] || initialCount) + value;
     const updatedTotal = updatedCount * price;
@@ -58,6 +126,8 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     };
     AsyncStorage.setItem('@ContadorPrecioTotal', JSON.stringify(updatedData));
   };
+  
+  
 
   useEffect(() => {
     const loadDataFromStorage = async () => {
@@ -117,10 +187,9 @@ const ShoppingCar = ({ navigation,myTabs }) => {
         AsyncStorage.setItem('@ContadorPrecioTotal', JSON.stringify(updatedData));
       });
     }
-   
+    
   };
-  
-  
+      
   useEffect(() => {
     const sumaTotal = counterSales.reduce((total, item) => {
       const precio = precioTotal[item.id] || item.precioTotal;
@@ -154,68 +223,6 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     console.log('This row opened', rowKey);
   };
 
-  const MoneyRendering = ({service, activePay}) => {
-    const [money, setMoney] = useState("");
-    useEffect(() => {
-      const gaveMoney = service - activePay;
-      if (Math.sign(gaveMoney) === -1) {
-        setMoney(0);
-        setIsNoSend(()=> {
-          false;
-          console.error("Revisa tu denominacion")
-        })
-      } else {
-        setMoney(parseFloat(gaveMoney));
-        setIsNoSend(true)
-      }
-    }, [service, activePay]);
-    return(
-      <Text variant="bodyMedium" style={{fontFamily: "Poppins", marginVertical: 30}}>Su Cambio sera de: {money || 0}</Text> 
-    )
-  }
-
-  const sendingSales = () => {
-    sendSales()
-  }
-
-  
-  const SelectDenomination = () => {
-    const [service, setService] = React.useState("complete");   
-    return (
-      <Box maxW="300">
-        <Select selectedValue={service} minWidth="200" accessibilityLabel="Choose Service" placeholder="Selecciona  denominación" _selectedItem={{
-        bg: "teal.600",
-        endIcon: <CheckIcon size="5" />
-      }} mt={1} onValueChange={itemValue => setService(itemValue)}>
-       
-        <Select.Item label="$20.00" value="20"/>
-        <Select.Item label="$50.00" value="50" />
-        <Select.Item label="$100.00" value="100" />
-        <Select.Item label="$200.00" value="200" />
-        <Select.Item label="$500.00" value="500" />
-        <Select.Item label="Cambio completo" value="complete" />
-       </Select>
-       <MoneyRendering service={service} activePay={totalVentas.toFixed(2)} />
-      </Box>
-    )
-  };
-  
-  const DialogDenomination = () => {
-    return (
-      <Portal>
-        <Dialog visible={visible} onDismiss={hideDialog}>
-        <Dialog.Content>
-          <Text variant="bodyMedium" style={{fontFamily: "Poppins"}}>¿La denominación del pago?</Text>
-          <SelectDenomination/>
-        </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setVisible(!visible)}>Cancel</Button>
-            <Button onPress={() => console.log('Ok')} onPress={()=>{sendingSales()}}>Ok</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-    );
-  };
   
   const renderItem = ({
     item,
