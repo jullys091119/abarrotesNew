@@ -42,8 +42,7 @@ export const StateProvider = ({ children }) => {
   const [email, setEmail] = useState("")
   const [profile, setProfile] = useState("")
   const [miniPerfil, setMiniPerfil] = useState("")
-
-
+  const [coord, setCoord]= useState({})
 
   const login = () => {
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
@@ -225,10 +224,9 @@ export const StateProvider = ({ children }) => {
     }
   }
   
-  const sendSales = async (venta,total,denominacion) => {
+  const sendSales = async (venta,total,denominacion,position) => {
     // Formatea los datos en el formato correcto para JSON:API
     const formattedData = venta.map((ventaItem) => {
-      console.log(ventaItem, "ventaItem")
       const obj = {
         idUser: uid,
         contador: ventaItem.contador,
@@ -237,7 +235,9 @@ export const StateProvider = ({ children }) => {
         precio: ventaItem.precio,
         precioTotal: ventaItem.precioTotal,
         ventas: ventaItem.ventas,
-        denominacion: denominacion
+        denominacion: denominacion,
+        precioTotalVenta: total,
+        position: position
       }
 
       return obj
@@ -289,6 +289,8 @@ export const StateProvider = ({ children }) => {
       console.log(error.config);
     });
   }
+
+
   
   useEffect(() => {
     getProveedores()
@@ -327,6 +329,7 @@ export const StateProvider = ({ children }) => {
       counterHomeScreen,
       removeSale,
       setUpdateSales,
+      setCoord,
       updateSales,
       counterSales,
       userRegister,
@@ -358,6 +361,7 @@ export const StateProvider = ({ children }) => {
       phone,
       uid,
       miniPerfil,
+      coord,
     }}>
       {children}
     </StateContext.Provider>
