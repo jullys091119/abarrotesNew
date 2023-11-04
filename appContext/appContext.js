@@ -225,37 +225,52 @@ export const StateProvider = ({ children }) => {
     }
   }
   
-  
-  const sendSales = async (bool) => {
+  const sendSales = async (venta,total,denominacion) => {
+    // Formatea los datos en el formato correcto para JSON:API
+    const formattedData = venta.map((ventaItem) => {
+      console.log(ventaItem, "ventaItem")
+      const obj = {
+        idUser: uid,
+        contador: ventaItem.contador,
+        imagen: ventaItem.imagen,
+        nombreProducto: ventaItem.nombreProducto,
+        precio: ventaItem.precio,
+        precioTotal: ventaItem.precioTotal,
+        ventas: ventaItem.ventas,
+        denominacion: denominacion
+      }
+
+      return obj
+     });
+
+    // console.log(formattedData, "FORMATED")
+    const tk = await AsyncStorage.getItem("@TOKEN")
     var axios = require("axios").default;
-    const tk =  await AsyncStorage.getItem("@TOKEN")
     axios.defaults.headers.common['X-CSRF-Token'] = tk;
+    
     var options = {
       method: 'POST',
-      url: 'https://abarrotes.msalazar.dev/jsonapi/node/Venta',
+      url: 'https://abarrotes.msalazar.dev/jsonapi/node/venta_cliente',
       headers: {
         'Content-Type': 'application/vnd.api+json',
         Accept: 'application/vnd.api+json',
-        'X-XSRF-Token': token,
-        Authorization: 'Basic YWRtaW46cm9vdA=='
+        Authorization: 'Basic YWRtaW46cm9vdA==',
+        'X-XSRF-Token': tk
       },
       data: {
         data: {
-          type: 'node--venta',
-          attributes: {
-            title: 'Venta',
-            field_cantidad_total_venta: '4',
-            field_nombre_producto_venta: 'Leche clavel',
-            field_total_venta: '26.00'
-          }
+          type: 'node--venta_cliente',
+          attributes: {title: `compra de ${name}`, field_venta_cliente_actual: JSON.stringify(formattedData)}
         }
       }
     };
     
     axios.request(options).then(function (response) {
       console.log(response.data);
+      removeSale()
+      setCounterSales([]);
+
     }).catch(function (error) {
-      console.error(error);
       if (error.response) {
         // La respuesta fue hecha y el servidor respondió con un código de estado
         // que esta fuera del rango de 2xx
@@ -273,7 +288,6 @@ export const StateProvider = ({ children }) => {
       }
       console.log(error.config);
     });
-
   }
   
   useEffect(() => {
