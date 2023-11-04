@@ -15,7 +15,7 @@ import { Select, Center, CheckIcon, Input, Stack, Checkbox } from "native-base";
 
 
 const ShoppingCar = ({ navigation,myTabs }) => {
-  const { setCounterSales, removeSale, counterSales, setUpdateSales, tokenLogout, setContador, sendSales} = useMyContext();
+  const { setCounterSales, removeSale, counterSales, setUpdateSales, tokenLogout, setContador, sendSales, coord} = useMyContext();
   const [contadorActionSheet, setContadorActionSheet] = useState(0);
   const [precioTotal, setPrecioTotal] = useState({});
   const [totalVentas, setTotalVentas] = useState(0);
@@ -38,14 +38,20 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     const venta = {
       items: counterSales, // La lista de elementos en el carrito
       total: totalVentas.toFixed(2),
-      denominacion: service // El total de la venta
+      denominacion: service, // El total de la venta
+      position: coord
       // Otros datos relevantes, como el cliente, la fecha, etc.
     };
-    sendSales(venta.items,venta.total, venta.denominacion)
-    if(sendSales) {
-      navigation.push("MyTabs")
-      setVisible(!visible)
+
+    if(Object.keys(venta.items).length !== 0) {
+      sendSales(venta.items,venta.total, venta.denominacion, venta.position)
+    } else {
+      alert("No puedes enviar una venta sin productos")
     }
+    if(sendSales) {
+      setVisible(!visible)
+      navigation.push("MyDrawer")
+    } 
   }
   
   const SelectDenomination = () => {
@@ -56,6 +62,7 @@ const ShoppingCar = ({ navigation,myTabs }) => {
       if (Math.sign(gaveMoney) === -1) {
         setMoney(0);
         setIsNoSend(false);
+
       } else {
         setMoney(parseFloat(gaveMoney));
         setIsNoSend(true);
@@ -285,7 +292,13 @@ const ShoppingCar = ({ navigation,myTabs }) => {
       </View>
       <Divider />
       <Box  safeArea flex={1} >
-        <SwipeListView data={counterSales} renderItem={renderItem} renderHiddenItem={renderHiddenItem} rightOpenValue={-130} previewRowKey={'0'} previewOpenValue={-40} previewOpenDelay={3000} onRowDidOpen={onRowDidOpen} />
+        {counterSales.length > 0?
+        (<SwipeListView data={counterSales} renderItem={renderItem} renderHiddenItem={renderHiddenItem} rightOpenValue={-130} previewRowKey={'0'} previewOpenValue={-40} previewOpenDelay={3000} onRowDidOpen={onRowDidOpen} />)
+        :(<View style={{flex: 1, justifyContent:"center", alignItems: "center", marginHorizontal: 30}}>
+           <Text style={{fontSize: 13, fontFamily: "Poppins"}}>¡Vamos! Aún no has agregado nada al carrito.</Text>   
+          </View>
+          )      
+        }
       </Box>
       <Text style={styles.totalText}>Cantidad Total: ${totalVentas.toFixed(2)}</Text>
       <TouchableOpacity style={styles.cancelButton} onPress={()=>setVisible(!visible)}>
@@ -302,8 +315,9 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   title: {
-    fontFamily: 'Bela',
+    fontFamily: 'Poppins',
     fontSize: 30,
+    fontWeight: "700",
     marginHorizontal: 20,
     paddingVertical: 10,
   },
@@ -316,7 +330,7 @@ const styles = StyleSheet.create({
   productCountText: {
     marginTop: 20,
     fontSize: 16,
-    fontWeight: '800',
+    fontFamily: "Poppins"
   },
   card: {
     marginHorizontal: 10,
@@ -363,7 +377,6 @@ const styles = StyleSheet.create({
   totalText: {
     marginTop: 20,
     fontSize: 16,
-    fontWeight: '800',
     marginLeft: 50,
     fontFamily: 'Poppins',
   },

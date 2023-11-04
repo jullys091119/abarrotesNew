@@ -33,18 +33,14 @@ import { Loading } from "./components/Loading";
 import { RenderProducts } from "./components/RenderProducts";
 import { Context } from "./appContext/appContext";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
-import { logout, IconPower } from "./utils/helpers";
 import UserInfo from "./modalScreen/UserInfo";
 import ShoppingCar from "./modalScreen/ShoppingCar";
 import ShoppingProduct from "./components/ShoppingProduct";
 import { NativeBaseProvider, Box, Center } from "native-base";
-import { EmailUser, NameUser, ImagePerfil} from "./utils/helpers";
-import MapView from 'react-native-maps';
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { EmailUser, NameUser, ImagePerfil, logout, IconPower, getCoordinate} from "./utils/helpers";
+import MapView, {Marker} from 'react-native-maps';
 import { getCurrentPositionAsync } from "expo-location";
 import * as Location from 'expo-location'
-
-
 
 
 const Tab = createBottomTabNavigator();
@@ -119,6 +115,7 @@ const  MyTabs = () => {
 
 const SetMaps = () => {
   const [location, setLocation] = useState(null);
+  const {name, setCoord,coord} = useMyContext()
 
   const onRegionChange = (newRegion) => {
     return newRegion;
@@ -131,13 +128,36 @@ const SetMaps = () => {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-  
       let userLocation = await Location.getCurrentPositionAsync({});
-      setLocation(userLocation.coords); // Almacena toda la información de ubicación
+      setCoord(userLocation.coords)
+      setLocation(userLocation.coords); // Almacena toda la información de ubicación 
     })();
   }, [location]);
   
   //  console.log(location)
+  const showLocationOfInterest =  ( ) => {
+    const locationsOfInterest = [
+      {
+        title: "Mi Ubicacion",
+        location: {
+          latitude: location.latitude,
+          longitude: location.longitude
+        },
+        description: `Ubicacion actual de ${name}`
+      }
+    ]
+
+    return locationsOfInterest.map((item,index) => {
+      return (
+        <Marker
+        key={index}
+        coordinate={item.location}
+        title={item.title}
+        description={item.description}
+        />
+      )
+    })
+  }
   return (
     <>
     {location ? (
@@ -149,7 +169,9 @@ const SetMaps = () => {
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}
-      />
+      >
+      {showLocationOfInterest()}
+      </MapView>
     ) : (
       <Text>Obteniendo ubicación...</Text>
     )}

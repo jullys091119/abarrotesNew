@@ -10,9 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from "react";
 import * as FileSystem from 'expo-file-system';
 import { decode, encode } from 'base-64';
-import { beginEvent } from "react-native/Libraries/Performance/Systrace";
 import { useEffect } from "react";
-import * as Location from 'expo-location';
 import axios from "axios";
 
 // Configura el módulo base-64
@@ -145,19 +143,6 @@ export const IconPower =  () => {
 }
 
 
-// const takePicture = async () => {
-//   const result = await ImagePicker.launchCameraAsync({
-//     allowsEditing: true,
-//     aspect: [4, 3],
-//   });
-  
-//   if (!result.canceled) {
-//     // La imagen tomada se encuentra en result.uri
-//   }
-// };
-
-
-
 export const ImagePerfil = () => {
   
   const [imagen, setImagen] = useState("")
@@ -284,3 +269,5 @@ export const ImagePerfil = () => {
     </TouchableWithoutFeedback>
   );
 };
+
+
