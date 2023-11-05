@@ -9,7 +9,7 @@ import { Badge } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import ShoppingCar from "../modalScreen/ShoppingCar";
-
+import { Select, Box, CheckIcon, Center } from "native-base";
 
 const ShoppingProduct = (props, {visible,style,animateFrom}) => {
   const { 
@@ -17,9 +17,7 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
     product,
     getCredentials,
     setNombreProducto,
-    setNombreProveedor,
     nombreProducto,
-    nombreProveedor,
     setContador,
     contador,
     setCounterSales,
@@ -39,7 +37,9 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
   const [ventas, setVentas] = useState([]);
   const [idProduct, setIdProduct] = useState("")
   const [isSalesExisted, setIsSaledExisted] = useState(true)
-  
+  const [nombreProveedor, setNombreProveedor] = useState("")
+  const [service, setService] =useState("");
+
   const getProducts = () => {
     axios
       .get(
@@ -57,7 +57,7 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
       .then(function (response) {
         setIdProduct(props.idProduct)
         setPrecio(response.data.field_precio_venta[0].value)
-        showTextNameProveedor(response.data.field_proveedor[0].value)
+        setNombreProveedor(response.data.field_proveedor[0].value)
         setImagen(response.data.field_imagen[0].url);
         setNombreProducto(response.data.field_nombre[0].value)
       })
@@ -65,23 +65,34 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
         console.log(error);
       });
   };
-  
-  const showTextNameProveedor = (op) => {
-    if (op === "sellorojo") {
-      setNombreProveedor("Sello Rojo");
-    } else if (op === "Cocacola") {
-    } else if (op === "Lala") {
-      setNombreProveedor("Lala");
-    } else if (op === "maria") {
-      setNombreProveedor("Maria")
-    } else if (op === "Bimbo") {
-      setNombreProveedor("Bimbo")
-    }
-  };
+   
  
-  const setSale = async () => {  
-    await AsyncStorage.setItem("@VENTA", JSON.stringify(venta + 1))
-  }
+  const SelectVegetables = () => {
+    
+    console.log(service)
+    const selectItems = []
+    for(let i=100; i<=1000; i+=100 ) {
+      selectItems.push(
+        <Select.Item 
+        label={`${i} gramos - Precio: $${(precio/1000 * i).toFixed(2)}`}
+        value={(precio/1000 * i).toFixed(2)}
+        key={i} />
+      );
+    }
+    return <Center>
+        <Box maxW="300">
+          <Select selectedValue={service} minWidth="200" accessibilityLabel="Cantidad en gramos" placeholder="Cantidad en gramos" _selectedItem={{
+          bg: "teal.600",
+          endIcon: <CheckIcon size="5" />
+        }} mt={1} onValueChange={itemValue => setService(itemValue)}>
+          
+          {selectItems}
+          </Select>
+        </Box>
+      </Center>;
+  };
+
+
 
   const getSale = async () => {
     let sales = await AsyncStorage.getItem("@VENTA")
@@ -105,7 +116,8 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
       contador: contador,
       precioTotal: precio * contador,
       ventas: venta + 1,
-      imagen: imagen.toString()
+      imagen: imagen.toString(),
+      precioVerdura: service
     };
     // Obtener las ventas existentes de AsyncStorage
     const ventasExistentes = await AsyncStorage.getItem("@VENTAS");
@@ -126,17 +138,18 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
 
     if(isExist) {
       alert("No puedes agregar un producto que ya existe")
-      setVenta(venta)
+      // setVenta(venta)
     }else {
       ventasActualizadas.push(nuevaVenta)
+      await AsyncStorage.setItem("@VENTA", JSON.stringify(venta + 1))
       alert("Se agregó el producto a la lista de ventas");
     }
  
-
     await AsyncStorage.setItem("@VENTAS", JSON.stringify(ventasActualizadas));
       
     // Actualizar el estado local
     setCounterSales(ventasActualizadas);
+
 
   }
  
@@ -171,35 +184,44 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
             }}
             resizeMode="contain"
           />
-          <View style={styles.cantidad}>
-            <IconButton
-              icon="minus"
-              iconColor="white"
-              size={20}
-              onPress={() => setContador(contador - 1)}
-              style={{backgroundColor: "red", borderRadius: 10, marginHorizontal: 25}}
-            />
-            
-            {
-              Math.sign(contador) === -1?
-              (<Text style={styles.counter}>{setContador(0)}</Text>):(<Text style={styles.counter}>{contador}</Text>)
-            }
-          
-            <IconButton
-              icon="plus"
-              iconColor="white"
-              size={20}
-              onPress={() => {setContador(contador + 1)}}
-              style={{backgroundColor: "red", borderRadius: 10, marginHorizontal: 25}}
-            />
-          </View>
+
+          {
+            nombreProveedor !== "maria"?(
+              <View style={styles.cantidad}>
+                <IconButton
+                  icon="minus"
+                  iconColor="white"
+                  size={20}
+                  onPress={() => setContador(contador - 1)}
+                  style={{backgroundColor: "red", borderRadius: 10, marginHorizontal: 25}}
+                />
+                
+                {
+                  Math.sign(contador) === -1?
+                  (<Text style={styles.counter}>{setContador(0)}</Text>):(<Text style={styles.counter}>{contador}</Text>)
+                }
+              
+                <IconButton
+                  icon="plus"
+                  iconColor="white"
+                  size={20}
+                  onPress={() => {setContador(contador + 1)}}
+                  style={{backgroundColor: "red", borderRadius: 10, marginHorizontal: 25}}
+                />
+              </View>
+            ): (
+             <>
+              <SelectVegetables/>
+             </>
+            )
+          }
           <View style={styles.textInformationBox}>
             <Text style={styles.nombreProveedor}>{nombreProveedor}</Text>
             <View style={styles.precioBox}>
             <Text style={styles.nombreProducto}>{nombreProducto}</Text>
-            <Text style={styles.precio}>${precio*contador}</Text>
-            </View>
-            <View style={{display: "flex", flexDirection: "row", marginTop: 10}}>
+            <Text style={styles.precio}>${precio*contador || service || 0}</Text>
+          </View>
+          <View style={{display: "flex", flexDirection: "row", marginTop: 10}}>
               <IconStar/>
               <IconStar/>
               <IconStar/>
@@ -212,14 +234,13 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
               color="white"
               // extended={isExtended}
               onPress={() =>{
-              setSale()
               addSales()
               }}
               visible={visible}
               animateFrom={'right'}
               iconMode={'static'}
               style={[styles.fabStyle, style, fabStyle]}
-          />
+            />
           </View>
         </View>
       </View>

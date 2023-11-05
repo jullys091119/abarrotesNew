@@ -31,7 +31,6 @@ export const StateProvider = ({ children }) => {
   const [error, setError] = useState("")
   const [contador, setContador] = useState(0)
   const [nombreProducto, setNombreProducto] = useState("")
-  const [nombreProveedor, setNombreProveedor] = useState("")
   const [precio, setPrecio] = useState(0)
   const [venta, setVenta] = useState(0)
   const [counterSales, setCounterSales] = useState([])
@@ -318,7 +317,6 @@ export const StateProvider = ({ children }) => {
       setAddressRegister,
       setPhoneRegister,
       setNombreProducto,
-      setNombreProveedor,
       setPrecio,
       setVenta,
       setContador,
