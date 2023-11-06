@@ -15,10 +15,10 @@ import { Select, Center, CheckIcon, Input, Stack, Checkbox } from "native-base";
 
 
 const ShoppingCar = ({ navigation,myTabs }) => {
-  const { setCounterSales, removeSale, counterSales, setUpdateSales, tokenLogout, setContador, sendSales, coord} = useMyContext();
+  const { setCounterSales, removeSale, counterSales, setUpdateSales, tokenLogout, setContador, sendSales, coord , setVenta} = useMyContext();
   const [contadorActionSheet, setContadorActionSheet] = useState(0);
   const [precioTotal, setPrecioTotal] = useState({});
-  const [totalVentas, setTotalVentas] = useState(0);
+  const [totalVentas, setTotalVentas] = useState(null);
   const [isNoSend, setIsNoSend] = useState(true)
   const [visible, setVisible] = useState(false);
   const hideDialog = () => setVisible(false);
@@ -51,16 +51,12 @@ const ShoppingCar = ({ navigation,myTabs }) => {
       
       if(Object.keys(venta.items).length !== 0) {
         sendSales(venta.items,venta.total, venta.denominacion, venta.position)
-
         // Borrar el precio total de la local storage
         AsyncStorage.removeItem('@TotalVentas')
          setTotalVentas(0);
       } else {
         alert("No puedes enviar una venta sin productos")
-      }
-
-
-      
+      }      
     } catch (error) {
       console.log("Error al guardar totalcentas en AsyncStorage")
     }
@@ -76,9 +72,10 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     useEffect(() => {
       const gaveMoney = service - totalVentas.toFixed(2);
       if (Math.sign(gaveMoney) === -1) {
+        console.error("Revisa tu denominacion")
         setMoney(0);
         setIsNoSend(false);
-        console.error("Revisa tu denominacion")
+        setService("Cambio completo")
 
       } else {
         setMoney(parseFloat(gaveMoney));
@@ -125,12 +122,6 @@ const ShoppingCar = ({ navigation,myTabs }) => {
   };
   
   const updateCounter = (itemId, value, initialCount, price) => {
-    console.log(
-     "itemID",itemId,
-     "value", value,
-     "InitialCOunt", initialCount,
-     "price", price
-    )
     const currentCount = contadorActionSheet[itemId] || initialCount;
     const updatedCount = currentCount + value;
   
@@ -145,11 +136,6 @@ const ShoppingCar = ({ navigation,myTabs }) => {
         return item;
       });
   
-      setCounterSales(updatedCounterSales);
-  
-      // Guarda las ventas actualizadas en AsyncStorage
-      AsyncStorage.setItem('@VENTAS', JSON.stringify(updatedCounterSales));
-  
       // Calcula el nuevo total de ventas
       const newTotalVentas = updatedCounterSales.reduce((total, item) => {
         const precio = parseFloat(item.precioVerdura || item.precioTotal || 0);
@@ -159,19 +145,30 @@ const ShoppingCar = ({ navigation,myTabs }) => {
       // Actualiza el estado de totalVentas
       setTotalVentas(newTotalVentas);
   
-      // Actualiza el estado de totalVentas en AsyncStorage
+      // Actualiza el estado de counterSales
+      setCounterSales(updatedCounterSales);
+  
+      // Guarda las ventas actualizadas en AsyncStorage
+      AsyncStorage.setItem('@VENTAS', JSON.stringify(updatedCounterSales));
+      // Actualiza el total de ventas en AsyncStorage
       AsyncStorage.setItem('@TotalVentas', newTotalVentas.toString());
     }
   };
+  
   
   
   const handleDelete = async (itemId, rowMap) => {
 
     AsyncStorage.getItem('@VENTA').then((data)=> {
     
-       AsyncStorage.setItem('@VENTA',JSON.stringify(data -1) )
+       AsyncStorage.setItem('@VENTA',JSON.stringify(data - 1))
     })
-  
+     
+    const newTotalVentas = sumaTotal - (precioTotal[itemId] || 0);
+      // Actualiza el estado de totalVentas después de eliminar elementos
+    setTotalVentas(newTotalVentas);  // Asegúrate de calcularlo según los elementos restantes
+     
+    removeSale(itemId);
     // Encuentra el índice del elemento a eliminar
     const itemIndex = counterSales.findIndex((item) => item.id === itemId);
 
@@ -206,8 +203,6 @@ const ShoppingCar = ({ navigation,myTabs }) => {
  
   const sumaTotal = useMemo(() => {
     return counterSales.reduce((total, item) => {
-      console.log(total)
-      console.log(`Item: ${item.nombreProducto}, Precio: ${item.precioVerdura}`);
       const precio = (typeof item.precioVerdura === 'number' ? item.precioVerdura : 0) + (typeof item.precioTotal === 'number' ? item.precioTotal : 0);
         return total + precio;
        
@@ -237,26 +232,25 @@ const ShoppingCar = ({ navigation,myTabs }) => {
     console.log('This row opened', rowKey);
   };
 
-
   useEffect(() => {
     const loadDataFromStorage = async () => {
       try {
         const ventasExistentes = await AsyncStorage.getItem('@VENTAS');
         if (ventasExistentes !== null) {
+          // Actualiza el estado con los datos cargados desde AsyncStorage
           setCounterSales(JSON.parse(ventasExistentes));
   
-          // Calcula el total de ventas aquí después de cargar los datos desde AsyncStorage
-          const sumaTotal = counterSales.reduce((total, item) => {
+          // Calcula el nuevo total de ventas
+          const sumaTotal = JSON.parse(ventasExistentes).reduce((total, item) => {
             const precio = parseFloat(item.precioVerdura || item.precioTotal || 0);
-            console.log(`Item: ${item.nombreProducto}, Precio: ${precio}`);
             return total + precio;
           }, 0);
   
-          console.log(`Total Ventas: ${sumaTotal}`);
+          // Actualiza el estado de totalVentas
           setTotalVentas(sumaTotal);
-        }
   
-        // Resto del código...
+          // También debes actualizar contadorActionSheet y precioTotal si es necesario.
+        }
       } catch (error) {
         console.error('Error al cargar las ventas desde AsyncStorage', error);
       }
@@ -264,42 +258,42 @@ const ShoppingCar = ({ navigation,myTabs }) => {
   
     loadDataFromStorage();
   }, []);
-
-
+ 
   useEffect(() => {
-    // Calcula el total de ventas aquí después de cargar los datos desde AsyncStorage
-    const sumaTotal = counterSales.reduce((total, item) => {
-      const precio = parseFloat(item.precioVerdura || item.precioTotal || 0);
-      console.log(`Item: ${item.nombreProducto}, Precio: ${precio}`);
-      return total + precio;
-    }, 0);
-  
-    console.log(`Total Ventas: ${sumaTotal}`);
-    setTotalVentas(sumaTotal);
-  }, [counterSales]);
-
-   
-  useEffect(() => {
-    // Cargar totalVentas desde AsyncStorage al iniciar la aplicación
     const loadTotalVentas = async () => {
       try {
         const storedTotalVentas = await AsyncStorage.getItem('@TotalVentas');
+        console.log('Stored Total Ventas:', storedTotalVentas);
         if (storedTotalVentas !== null) {
           // Si se encuentra un valor en AsyncStorage, conviértelo a número y asígnalo a totalVentas
           setTotalVentas(parseFloat(storedTotalVentas));
+        } else {
+          // Si no hay valor almacenado, inicializa totalVentas en 0
+          setTotalVentas(0);
         }
       } catch (error) {
         console.error('Error al cargar totalVentas desde AsyncStorage', error);
       }
     };
-  
-    loadTotalVentas();
-    // Resto de tu lógica...
   }, []);
-
   
-
   
+  useEffect(() => {
+    // Calculate the total sales whenever counterSales changes
+    const newTotalVentas = counterSales.reduce((total, item) => {
+      const precio = parseFloat(item.precioVerdura || item.precioTotal || 0);
+      return total + precio;
+    }, 0);
+
+    // Update the total sales in state
+    setTotalVentas(newTotalVentas);
+
+    // Update the total sales in AsyncStorage
+    AsyncStorage.setItem('@TotalVentas', newTotalVentas.toString());
+  }, [counterSales]);
+
+
+
   const renderItem = ({
     item,
     index
@@ -377,7 +371,9 @@ const ShoppingCar = ({ navigation,myTabs }) => {
           )      
         }
       </Box>
-      <Text style={styles.totalText}>Cantidad Total: ${totalVentas.toFixed(2)}</Text>
+      <Text style={styles.totalText}>
+        Cantidad Total: ${totalVentas !== null ? totalVentas.toFixed(2) : 0}
+      </Text>
       <TouchableOpacity style={styles.cancelButton} onPress={()=>setVisible(!visible)}>
         <Text style={styles.buttonText}>Comprar</Text>
       </TouchableOpacity>

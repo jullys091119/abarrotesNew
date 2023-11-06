@@ -68,8 +68,6 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
    
  
   const SelectVegetables = () => {
-    
-    console.log(service)
     const selectItems = []
     for(let i=100; i<=1000; i+=100 ) {
       selectItems.push(
@@ -138,13 +136,13 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
 
     if(isExist) {
       alert("No puedes agregar un producto que ya existe")
-      // setVenta(venta)
     }else {
       ventasActualizadas.push(nuevaVenta)
-      await AsyncStorage.setItem("@VENTA", JSON.stringify(venta + 1))
+      setVenta(venta + 1)
       alert("Se agregó el producto a la lista de ventas");
+      await AsyncStorage.setItem("@VENTA", JSON.stringify(venta + 1))
     }
- 
+    
     await AsyncStorage.setItem("@VENTAS", JSON.stringify(ventasActualizadas));
       
     // Actualizar el estado local
@@ -154,17 +152,22 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
   }
  
   const fabStyle = { [animateFrom]: 16 };
- 
+
+  const subtractFromCounter = () => {
+    if (contador > 0) {
+      setContador(contador - 1);
+    }
+  }
+  
   useEffect(() => {
     getProducts()
   },[getSale()]);
 
- 
   return (
     <>
       <View style={styles.container}>
         <View style={{display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
-          <Badge style={styles.badge}>{venta==-1?0:venta}</Badge>
+          <Badge style={styles.badge}>{venta}</Badge>
           <IconButton
             icon="cart-plus"
             iconColor="gold"
@@ -192,7 +195,7 @@ const ShoppingProduct = (props, {visible,style,animateFrom}) => {
                   icon="minus"
                   iconColor="white"
                   size={20}
-                  onPress={() => setContador(contador - 1)}
+                  onPress={() => {subtractFromCounter}}
                   style={{backgroundColor: "red", borderRadius: 10, marginHorizontal: 25}}
                 />
                 
