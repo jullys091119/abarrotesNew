@@ -20,17 +20,34 @@ import { Badge } from "react-native-paper";
 //Context API
 import { useMyContext } from "../appContext/appContext";
 import { RenderProducts } from "./RenderProducts";
+import { Value } from "react-native-reanimated";
 
 
 function HomeScreen({ navigation }) {
-  const { productos, imagen, name, getCredentials, logout, setProducts, products, counterHome, counterHomeScreen, miniPerfil} = useMyContext();
+  const { searchProduct,
+    value,
+    setValue,
+    productos,
+    imagen,
+    name,
+    getCredentials,
+    logout,
+    setProducts,
+    products,
+    counterHome,
+    counterHomeScreen,
+    miniPerfil,
+    productSearch
+    
+  } = useMyContext();
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [index, setIndex] = useState("");
   const drawer = useRef(null);
   const [currentProveedor,setCurrentProveedor] = useState("")
   const [drawerPosition, setDrawerPosition] = useState('left');
   
-   console.log(miniPerfil)
+
+
   const renderShoppingCar = () => {
     navigation.push("ShoppingCar")
   }
@@ -44,6 +61,7 @@ function HomeScreen({ navigation }) {
       onPress={()=>{renderShoppingCar()}}
     />
   );
+
   
   const MiniImagePerfil = () => (
     <Avatar
@@ -56,12 +74,9 @@ function HomeScreen({ navigation }) {
       }}
   />
   )
-  
-
   const SearchIcon = (props) => (
-    <Icon style={styles.icon} fill="#8F9BB3" name="search-outline" />
+    <Icon style={styles.icon} fill="#8F9BB3" name="search-outline"  />
     );
-    
     const openProducts = (index, proveedor) => {
       for (let i = 0; i <productos.length; i++) {
         setSelectedCardIndex(index);
@@ -70,9 +85,27 @@ function HomeScreen({ navigation }) {
       }
     };
     
-  useEffect(() => {
-   getCredentials()
-  }, [counterHomeScreen()]);
+    useEffect(() => {
+    getCredentials()
+    }, [counterHomeScreen()]);
+
+    const handleReactiveText = ( value ) =>  {
+      const regex = new RegExp('\\b' + value + '\\b', 'i');
+      setValue(value)
+      let coincidences = []
+      for (let i = 0; i < productSearch.length; i++) {
+        const product = productSearch[i];
+        if (regex.test(product)) {
+           coincidences.push(product)
+        }
+      }
+     
+      if(value.length <= 0) {
+        coincidences = []
+      } else if (coincidences.length !== []) {
+        searchProduct(coincidences)
+      }
+    }
 
   return (
     <>
@@ -96,14 +129,22 @@ function HomeScreen({ navigation }) {
               Es hora de encontrar tu producto!
             </Text>
           </View>
+
+
+
           <View style={styles.searchProduct}>
             <Input
+             value={value}
               style={styles.inputSearch}
               placeholder="Buscar Producto"
               accessoryLeft={<SearchIcon />}
-              onChangeText={(nextValue) => setValue(nextValue)}
+              onChangeText={handleReactiveText}
             />
           </View>
+
+
+
+
           <View style={styles.navBarBox}>
             <FlatList
               keyExtractor={(item) => item.id}

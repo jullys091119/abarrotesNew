@@ -26,6 +26,7 @@ const ShoppingCar = ({ navigation,myTabs }) => {
   const [money, setMoney] = useState(0);
   const [service, setService] = useState("complete"); 
   
+ 
   const cancelSales = () => {
     removeSale();
     setCounterSales([]);

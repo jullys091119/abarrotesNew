@@ -20,8 +20,15 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff",
-        "permissions": ["CAMERA", "CAMERA_ROLL"]
-      }
+        "permissions": [
+          "CAMERA",
+          "CAMERA_ROLL"
+        ]
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.huerogil.abarrotes"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,8 +39,12 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
-        
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0fd861e1-b416-44a6-a69d-c90b2f80713a"
+      }
+    }
   }
 }
