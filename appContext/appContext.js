@@ -42,6 +42,9 @@ export const StateProvider = ({ children }) => {
   const [profile, setProfile] = useState("")
   const [miniPerfil, setMiniPerfil] = useState("")
   const [coord, setCoord]= useState({})
+  const [value, setValue] = useState("")
+  const [productSearch, setProductSearch] = useState({})
+
 
   const login = () => {
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
@@ -290,14 +293,53 @@ export const StateProvider = ({ children }) => {
   }
 
 
+  const getProducts  = ( ) => {
+     let nameProduct = [] 
+     axios.get('https://abarrotes.msalazar.dev/jsonapi/node/productos', {
+      headers: {
+        "Content-Type" : "application/json"
+      }
+    }).then((data)=> {
+      data.data.data.map((el)=>nameProduct.push(el.attributes.field_nombre))
+      setProductSearch(nameProduct)
+    }).catch((err)=> console.log(err))
+  }
+
+  const searchProduct = (coincidences) => {
+    console.log(coincidences.length)
+    if(coincidences.length > 0) {
+      coincidences.forEach((element, index) => {
+       axios.get(`https://abarrotes.msalazar.dev/jsonapi/node/productos?filter[title]=${element}`, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+       }).then((data)=> {
+        let prd = {}
+        for(let i=0; i <data.data.data.length; i++) {
+          prd = data.data.data[i].attributes
+        }
+        setProducts(prd)
+        console.log(products, "products")
+      }).catch((error)=> {
+        console.log(error)
+      })
+      });
+    } else {
+      console.log("esta vacio")
+    }
+ 
+  }
+
+
   
   useEffect(() => {
     getProveedores()
     getCredentials()
     counterHomeScreen()
     setIsCharged(true)
+    getProducts()
     //setPicturePhotoProfile()
-  }, [])
+  }, [value])
 
   return (
     <StateContext.Provider value={{
@@ -319,6 +361,7 @@ export const StateProvider = ({ children }) => {
       setNombreProducto,
       setPrecio,
       setVenta,
+      setValue,
       setContador,
       setCounterSales,
       setAddSales,
@@ -338,6 +381,7 @@ export const StateProvider = ({ children }) => {
       addressRegister,
       phoneRegister,
       isAuthenticated,
+      searchProduct,
       user,
       password,
       precio,
@@ -360,6 +404,8 @@ export const StateProvider = ({ children }) => {
       uid,
       miniPerfil,
       coord,
+      value,
+      productSearch
     }}>
       {children}
     </StateContext.Provider>
