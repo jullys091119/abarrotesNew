@@ -37,7 +37,8 @@ function HomeScreen({ navigation }) {
     counterHome,
     counterHomeScreen,
     miniPerfil,
-    productSearch
+    productSearch ,
+    productCoincidences
     
   } = useMyContext();
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
@@ -45,8 +46,7 @@ function HomeScreen({ navigation }) {
   const drawer = useRef(null);
   const [currentProveedor,setCurrentProveedor] = useState("")
   const [drawerPosition, setDrawerPosition] = useState('left');
-  
-
+   
 
   const renderShoppingCar = () => {
     navigation.push("ShoppingCar")
@@ -62,7 +62,15 @@ function HomeScreen({ navigation }) {
     />
   );
 
-  
+  const IconViewShop = (props) => (
+    <MaterialCommunityIcons
+      name="storefront"
+      color="white"
+      size={25}
+      style={styles.iconMenu}
+    />
+  );
+
   const MiniImagePerfil = () => (
     <Avatar
       source={{ uri: `https://abarrotes.msalazar.dev` + miniPerfil }}
@@ -89,6 +97,71 @@ function HomeScreen({ navigation }) {
     getCredentials()
     }, [counterHomeScreen()]);
 
+
+    const ShowProductCoincidences = ( ) => {
+      return (
+        <>
+          <FlatList
+            style={styles.cardProduct}
+            numColumns={2}
+            keyExtractor={(item) => item.id}
+            data={productCoincidences}
+            renderItem={({ item, index }) => {
+              return (
+                <Card
+                  style={styles.cardCoincidences}
+                  onPress={() => {
+                    // actionSheetOpenProduct(item.attributes.drupal_internal__nid);
+                  }}
+                >
+                  <Text style={{ fontFamily: "Poppins", fontWeight: "600" }}>
+                    {item.nombre}
+                  </Text>
+                  {item.imagen && (
+                    <Image
+                      source={{
+                        uri:
+                         `https://abarrotes.msalazar.dev` + item.imagen,
+                      }}
+                      style={{
+                        width: 130,
+                        height: 100,
+                        borderRadius: 10,
+                        marginVertical: 10,
+                      }}
+                      resizeMode="contain"
+                    />
+                  )}
+                  <View style={styles.IconShopCar}>
+                    <IconViewShop />
+                  </View>
+                  <View
+                    style={{
+                      height: 40,
+                      width: 110,
+                      transform: [{ rotate: "30deg" }],
+                      backgroundColor: "red",
+                      position: "absolute",
+                      left: -40,
+                      bottom: -45,
+                    }}
+                  ></View>
+                </Card>
+              );
+            }}
+          />
+          {/* <ActionSheet ref={actionSheetRef}>
+           <View  style={styles.containerSheet}>
+              <ShoppingProduct idProduct={idProduct}  CloseSheetModal={CloseSheetModal}/>
+            </View>
+          </ActionSheet> */}
+        </>
+      );
+    }
+   
+    useEffect(()=> {
+
+    }, [productCoincidences])
     const handleReactiveText = ( value ) =>  {
       const regex = new RegExp('\\b' + value + '\\b', 'i');
       setValue(value)
@@ -182,6 +255,8 @@ function HomeScreen({ navigation }) {
         </View>
         <View style={styles.boxCard}>
           {currentProveedor && <RenderProducts proveedor={currentProveedor}/>}
+          {productCoincidences &&  <ShowProductCoincidences/>}
+         
         </View>
       </SafeAreaView>
     </>
@@ -233,8 +308,20 @@ const styles = StyleSheet.create({
     width: 100,
     padding: 10,
   },
+  cardCoincidences: {
+    backgroundColor: "white",
+    borderRadius:20,
+    width: 164,
+    height: 190,
+    marginHorizontal: 7,
+    marginVertical: 10,
+    position: "relative",
+    overflow: "hidden",
+    padding: 10,
+    paddingTop: 0,
+  },
   boxCard: {
-    marginTop: 30,
+    marginTop: 0,
     height: 300,
   },
   badge: {
@@ -248,7 +335,18 @@ const styles = StyleSheet.create({
   miniPerfil: {
     alignSelf: "flex-end",
     marginTop: -30
-  }
+  },
+  IconShopCar: {
+    backgroundColor: "gold",
+    position: "absolute",
+    right: -26,
+    bottom: -12,
+    height: 50,
+    width: 60,
+    borderTopLeftRadius: 17,
+    paddingLeft: 7,
+    paddingTop: 13,
+  },
 });
 
 export default HomeScreen;

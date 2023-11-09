@@ -75,6 +75,7 @@ export const RenderProducts = (props) => {
         renderItem={({ item, index }) => {
           return (
             <Card
+              key={index}
               style={styles.card}
               onPress={() => {
                 actionSheetOpenProduct(item.attributes.drupal_internal__nid);
