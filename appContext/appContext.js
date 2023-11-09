@@ -44,7 +44,7 @@ export const StateProvider = ({ children }) => {
   const [coord, setCoord]= useState({})
   const [value, setValue] = useState("")
   const [productSearch, setProductSearch] = useState({})
-
+  const [productCoincidences, setProductCoincidences] = useState({})
 
   const login = () => {
     return axios.post('https://abarrotes.msalazar.dev/user/login?_format=json', {
@@ -296,7 +296,7 @@ export const StateProvider = ({ children }) => {
   const getProducts  = ( ) => {
      let nameProduct = [] 
      axios.get('https://abarrotes.msalazar.dev/jsonapi/node/productos', {
-      headers: {
+       headers: {
         "Content-Type" : "application/json"
       }
     }).then((data)=> {
@@ -304,28 +304,30 @@ export const StateProvider = ({ children }) => {
       setProductSearch(nameProduct)
     }).catch((err)=> console.log(err))
   }
-
+  
   const searchProduct = (coincidences) => {
-    console.log(coincidences.length)
+    let prd = []
     if(coincidences.length > 0) {
       coincidences.forEach((element, index) => {
-       axios.get(`https://abarrotes.msalazar.dev/jsonapi/node/productos?filter[title]=${element}`, {
+       axios.get(`https://abarrotes.msalazar.dev/jsonapi/node/productos?filter[field_nombre]=${element}&include=field_imagen`, {
         headers: {
           "Content-Type": "application/json"
         }
        }).then((data)=> {
-        let prd = {}
         for(let i=0; i <data.data.data.length; i++) {
-          prd = data.data.data[i].attributes
+          prd.push({
+            id:data.data.data[0].id,
+            nombre: data.data.data[i].attributes.field_nombre,
+            imagen:data.data.included[i].attributes.uri.url
+          })
         }
-        setProducts(prd)
-        console.log(products, "products")
+        setProductCoincidences(prd)
       }).catch((error)=> {
         console.log(error)
       })
       });
     } else {
-      console.log("esta vacio")
+      // console.log("esta vacio")
     }
  
   }
@@ -359,6 +361,7 @@ export const StateProvider = ({ children }) => {
       setAddressRegister,
       setPhoneRegister,
       setNombreProducto,
+      setProductCoincidences,
       setPrecio,
       setVenta,
       setValue,
@@ -405,7 +408,8 @@ export const StateProvider = ({ children }) => {
       miniPerfil,
       coord,
       value,
-      productSearch
+      productSearch,
+      productCoincidences
     }}>
       {children}
     </StateContext.Provider>
